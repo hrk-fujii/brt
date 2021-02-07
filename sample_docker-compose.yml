@@ -1,0 +1,44 @@
+version: '3'
+
+volumes:
+    logs:
+        driver: local
+
+services:
+    nginx:
+        image: nginx
+        volumes:
+            - ./www:/var/www
+            - ./nginx/logs:/etc/nginx/logs/
+            - ./nginx/conf/default.conf:/etc/nginx/conf.d/default.conf
+        ports:
+            - 10101:80
+            - 10201:443
+
+        depends_on:
+            - brt-app
+
+    brt-app:
+        build: .
+        environment:
+            docker: "true"
+            DB_HOST: "mariadb"
+            DB_USER: "[user]"
+            DB_NAME: "brt"
+            DB_PASS: "[password]"
+        volumes:
+            - logs:/var/www/logs
+            - ./www:/var/www
+        working_dir: /var/www
+        depends_on:
+            - mariadb
+        command: "composer install"
+
+    mariadb:
+        image: mariadb:10.5
+        volumes:
+            - ./mariadb:/var/lib/mysql
+        ports:
+            - "10301:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: [password]
