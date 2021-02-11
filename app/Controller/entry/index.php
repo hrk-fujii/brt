@@ -3,6 +3,7 @@
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Util\ValidationUtil;
+use Util\MemberUtil;
 use Model\Dao\Users;
 use Model\Dao\Confirm_mails;
 
@@ -10,29 +11,20 @@ use Model\Dao\Confirm_mails;
 // ユーザー登録
 $app->get('/entry', function (Request $request, Response $response) {
     // メール認証データベース
-	cMailTable = new Confirm_mails($this->db);
+	$cMailTable = new Confirm_mails($this->db);
     
-    // 古いデータは削除
-    $cMailTable->delete([
-        "set_at"=> ["<", time() - 180]
-    ]);
-
     // パラメータ取得
-    if (!empty($request->getUri()->getQueryParams()["session"])){
+    if (!empty($request->getQueryParams()["session"])){
         $param = $request->getUri()->getQueryParams()["session"];
+        $cMailData = $cMailTable->selectFromParam($param);
     }
-
-    // パラメータを確認
-    if (!empty($param)){
-        cMailData = cMailTable->select([
-            "session_id"=> $param
-        ]);
-    } 
 
     if (empty($cMailData)){ // 未確認ならばメールアドレス認証へ
         return confirmMailCtrl($response, $this->view, $cMailTable);
     } else{ // 確認済みならばユーザー登録またはパスワードリセットへ
-        $_SESSION["brt-cMailData"] = $cMailData;
+        $_SESSION["brt-confirmParam"] = $cMailData["session_id"];
+        $_SESSION["brt-confirmMail"] = $cMailData["mail"];
+        $cMailTable->deleteFromParam($param);
         return userEntryCtrl($response, $this->view, $this->db);
     }
 });
@@ -45,11 +37,11 @@ $app->post('/entry', function (Request $request, Response $response) {
     
     // メールアドレス確認
     if (!empty($input["newMail"])){
-        $message = ValidationUtil::checkString("ntut-email", $input["newMail"]);
+        $message = ValidationUtil::checkString("ntut-mail", $input["newMail"]);
         if ($message===""){ // メールアドレスが正常
             return sendConfirmMailCtrl($request, $response, $this->view, $cMailTable, $input["newMail"]);
         } else{
-            $message = ValidationUtil::checkString("email", $input["mail"]);
+            $message = ValidationUtil::checkString("mail", $input["mail"]);
             if ($message==="" && $_SESSION["brt-userType"]===USER_TYPE_ADMIN){
                 return sendConfirmMailCtrl($request, $response, $this->view, $cMailTable, $input["mail"]);
             } elseif (empty($message)){
@@ -57,22 +49,22 @@ $app->post('/entry', function (Request $request, Response $response) {
             }
         }
         // 認証再試行
-        return confirmMailCtrl($response, $this->view, $cMailTable, $message){
+        return confirmMailCtrl($response, $this->view, $cMailTable, $message);
     
     // ユーザー登録
     } elseif (!empty($input["new-confirmMail"])){
-        if (empty($_SESSION["brt-cMailData"])){
+        $userTable = new Users($this->db);
+        
+        if (empty($_SESSION["brt-confirmMail"])){
             return ViewUtil::error($response, $this->view);
         } else{
-            $userTable = new Users($this->db);
-            
             $message = ""; // バリデーション
-            if ($input["new-confirmMail"]===$_SESSION["brt-cMailData"]["mail"]){ // メールアドレス有効
+            if ($input["new-confirmMail"]===$_SESSION["brt-concirmMail"]){ // メールアドレス有効
                 $message = $message. "・メールアドレスが謝っています。\n";
             }
             $message = $message. ValidationUtil::checkString("userName", $input["name"], "・", "\n");
             $message = $message. ValidationUtil::checkString("userPassword", $input["password"], "・", "\n");
-            if (!empty($userTable->select(["name"=> $input["name"]]))){
+            if (!empty($userTable->selectFromName($input["name"]))){
                 $message = $message. "・このユーザー名は、すでに使用されています。\n";
             }
             if ($input["password"]!==$input["confirmPassword"]){
@@ -83,29 +75,17 @@ $app->post('/entry', function (Request $request, Response $response) {
             }
             
             // 新規登録
-            $userData = $userTable->select([
-                "mail"=> $input["new-confirmMail"]
-            ]);
+            $userData = $userTable->selectFromMail($input["new-confirmMail"]);
             if (empty($userData)){
-                $param = hash('sha256', random_int(PHP_INT_MIN, PHP_INT_MAX));
-                $userId = $userTable->insert([
-                    "name"=> $input["name"],
-                    "mail"=> $input["new-confirmMail"],
-                    "password_hash"=> password_hash($input["password"]),
-                    "url_param"=> $param,
-                    "last_updated_at"=> time(),
-                    "last_logdin_at"=> time(),
-                    "type"=> USER_TYPE_GENERAL
-                ]);
-            }
-            if (!empty($userId) && $userId!==FALSE && !empty($userTable->select([
-                "id"=> $userId,
-                "name"=> $input["name"]
-            ]))){
-                $_SESSION["brt-userId"] = $userId;
-                $_SESSION["brt-userName"] = $input["name"];
-                $data = ["name"=> $input["name"], "url"=> $request->getUri->getBaseUrl()."/?id=".$param];
-                return $this->view->render($response, 'entry/confirm.wig', $data);
+                $param = MemberUtil::makeRandomId();
+                $userId = $userTable->insertUser($input["name"], $input["new-confirmMail"], password_hash($input["password"]), $param);
+                if ($userId!==FALSE){
+                    MemberUtil::login($userId);
+                    $data = ["name"=> $input["name"], "url"=> $request->getUri->getBaseUrl()."/?id=".$param];
+                    return $this->view->render($response, 'entry/newOk.twig', $data);
+                } else{
+                    return ViewUtil::error($response, $this->view);
+                }
             } else{
                 return ViewUtil::error($response, $this->view);
             }
@@ -113,19 +93,17 @@ $app->post('/entry', function (Request $request, Response $response) {
 
     // パスワード更新
     } elseif (!empty($input["update-confirmMail"])){
-        if (empty($_SESSION["brt-cMailData"])){
+        $userTable = new Users($this->db);
+
+        if (empty($_SESSION["brt-confirmMail"])){
             return ViewUtil::error($response, $this->view);
         } else{
-            $userTable = new Users($this->db);
-            
             $message = ""; // バリデーション
-            if ($input["update-confirmMail"]===$_SESSION["brt-cMailData"]["mail"]){ // メールアドレス有効
+            if ($input["update-confirmMail"]===$_SESSION["brt-concirmMail"]){ // メールアドレス有効
                 $message = $message. "・メールアドレスが謝っています。\n";
             }
+            $message = $message. ValidationUtil::checkString("userName", $input["name"], "・", "\n");
             $message = $message. ValidationUtil::checkString("userPassword", $input["password"], "・", "\n");
-            if (!empty($userTable->select(["name"=> $input["name"]]))){
-                $message = $message. "・このユーザー名は、すでに使用されています。\n";
-            }
             if ($input["password"]!==$input["confirmPassword"]){
                 $message = $message. "・パスワードと、パスワードの確認が一致していません。\n";
             }
@@ -133,30 +111,17 @@ $app->post('/entry', function (Request $request, Response $response) {
                 return userEntryCtrl($response, $this->view, $this->db, mb_substr($message, 0, -1), ["mail"=> $input["update-confirmMail"], "name"=> $input["name"]]);
             }
             
-            // 新規登録
-            $userData = $userTable->select([
-                "mail"=> $input["update-confirmMail"]
-            ]);
-            if (empty($userData)){
-                $param = hash('sha256', random_int(PHP_INT_MIN, PHP_INT_MAX));
-                $userId = $userTable->insert([
-                    "name"=> $input["name"],
-                    "mail"=> $input["new-confirmMail"],
-                    "password_hash"=> password_hash($input["password"]),
-                    "url_param"=> $param,
-                    "last_updated_at"=> time(),
-                    "last_logdin_at"=> time(),
-                    "type"=> USER_TYPE_GENERAL
-                ]);
-            }
-            if (!empty($userId) && $userId!==FALSE && !empty($userTable->select([
-                "id"=> $userId,
-                "name"=> $input["name"]
-            ]))){
-                $_SESSION["brt-userId"] = $userId;
-                $_SESSION["brt-userName"] = $input["name"];
-                $data = ["name"=> $input["name"], "url"=> $request->getUri->getBaseUrl()."/?id=".$param];
-                return $this->view->render($response, 'entry/confirm.wig', $data);
+            // 更新
+            $userData = $userTable->selectFromMail($input["update-confirmMail"]);
+            if (!empty($userData)){
+                $param = MemberUtil::makeRandomId();
+                if ($userTable->updatePassword_hashFromId($userData["id"], password_hash($input["password"]), $param)===TRUE){
+                    MemberUtil::login($userData["id"]);
+                    $data = ["name"=> $input["name"], "url"=> $request->getUri->getBaseUrl()."/?id=".$param];
+                    return $this->view->render($response, 'entry/updateOk.twig', $data);
+                } else{
+                    return ViewUtil::error($response, $this->view);
+                }
             } else{
                 return ViewUtil::error($response, $this->view);
             }
@@ -167,28 +132,27 @@ $app->post('/entry', function (Request $request, Response $response) {
 // メールアドレス確認フォーム
 function confirmMailCtrl($response, $view, $cMailTable, $message=""){
     $data = ["message"=> $message];
-    return $view->render($response, 'entry/send.twig', $data);
+    return $view->render($response, 'entry/index.twig', $data);
 }
 
 // 確認メール送信
-function sendConfirmMailCtrl($request, $request, $view, $cMailTable, $mail){
+function sendConfirmMailCtrl($request, $response, $view, $cMailTable, $mail){
     $data = ["mail"=> $mail];
-    $param = hash('sha256', random_int(PHP_INT_MIN, PHP_INT_MAX));
+    $param = MemberUtil::makeRandomId();
 
     // db登録
-    $cMailTable->insert([
-        "mail"=> $mail,
-        "session_id"=> $param,
-        "set_at"=> time()
-    ]);
+    if (!empty($cMailTable->selectFromMail($mail))){ // 古いのは削除
+        $cMailTable->deleteFromMail($mail);
+    }
+    $cMailTable->insertItem($mail, $param);
     
     // メール送信
-    $title = "BRT メールアドレスの確認"
+    $title = "BRT メールアドレスの確認";
     $text = "BRTのご利用、ありがとうございます。\nユーザー登録、パスワードをリセットする場合は、以下のURLにアクセスしてください。\n\n".
         $request->getUri()->getBaseUrl(). "/entry?session=". $param.
-        "\n\nBRT運営チーム"
+        "\n\nBRT運営チーム";
     
-    return $view->render($response, 'entry/send.twig', $data);
+        return $view->render($response, 'entry/send.twig', $data);
 }
 
 // ユーザー登録フォーム
@@ -197,12 +161,10 @@ function userEntryCtrl($response, $view, $db, $message="", $previousData=["mail"
     
     // ユーザー登録情報確認
     $userTable = new Users($db, $message="");
-    $userData = $userTable->select([
-        "mail"=> $_SESSION["brt-cMailData"]
-    ]);
+    $userData = $userTable->selectFromMail($_SESSION["brt-confirmMail"]);
     if (empty($userData)){ // ユーザー登録
         return $view->render($response, 'entry/new.twig', $data);
     } else{ // パスワード更新
-        return $view->render($response, 'entry/password.twig', $data);
+        return $view->render($response, 'entry/update.twig', $data);
     }
 }
