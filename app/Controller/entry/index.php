@@ -4,6 +4,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Util\ValidationUtil;
 use Util\MemberUtil;
+use Util\MailUtil;
 use Model\Dao\Users;
 use Model\Dao\Confirm_mails;
 
@@ -152,6 +153,7 @@ function sendConfirmMailCtrl($request, $response, $view, $cMailTable, $mail){
         $request->getUri()->getBaseUrl(). "/entry?session=". $param.
         "\n\nBRT運営チーム";
     
+    MailUtil::send($title, $text, "no-reply", $mail);
         return $view->render($response, 'entry/send.twig', $data);
 }
 
