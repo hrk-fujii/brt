@@ -1,5 +1,5 @@
 {% set page_title = "ユーザー登録完了" %}
-{% set page_description = "LAMP Controllerのユーザー登録が完了しました。" %}
+{% set page_description = "BRT - 新規ユーザー登録の完了通知。" %}
 
 {#レイアウト継承#}
 {% extends "layout/layout.twig" %}
@@ -11,36 +11,35 @@
 {# ページ本文 #}
 {% block page_content %}
 
-    <div class="jumbotron text-center">
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>ユーザー登録完了</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
         <h2>ユーザー登録完了</h2>
     </div>
 
     <div class="h2 text-center">
-        <h3>LAMP Controllerへようこそ！</h3>
+        <h3>BRTへようこそ！</h3>
         <p>以下の内容で登録しました。</p>
     </div>
 
     <div class="container py-5">
         <div class="row mb-3">
             <label class="col-3">ユーザー名</label>
-            <label class="col-9">{{ userName }}</label>
+            <label class="col-9">{{ name }}</label>
         </div>
         <div class="row mb-3">
-            <label class="col-3">表示名</label>
-            <label class="col-9"> {{ displayName }}</label>
-        </div>
-        <div class="row mb-3">
-            <label class="col-3">ソフトウェアキー</label>
-            <label class="col-9"> {{ softwareKey }}</label>
+            <label class="col-3">ログイン用URL</label>
+            <label class="col-9"> {{ url }}</label>
         </div>
     </div>
 
-    <p>※ソフトウェアキーは、LAMPがコントローラと通信するときに利用されますので、他人に知られないように十分ご注意ください。また、LAMPがコントローラに登録されると、自動でダウンロードされます。</p>
-    <p>※アカウントは、１年以上アクセスがない場合、削除されることがありますのでご注意ください。</p>
+    <p>※ログイン用URLを使用すると、ユーザー名とパスワードによる認証を省略できます。ブックマークなどに登録しておくと便利です。</p>
+    <p>※ログイン用URLやパスワードは、他人に知られないように十分ご注意ください。不正な利用が認められた場合は、安全のため、アカウントを削除させていただく場合があります。</p>
 
     <div class="text-center my-4">
         <a class="btn btn-success mx-4" role="button" href="{{ get_base_path() }}/">トップページへ</a>
-        <a class="btn btn-success mx-4" role="button" href="{{ get_base_path() }}/login">ログイン画面へ</a>
+    </div>
 
 {% endblock %}
 

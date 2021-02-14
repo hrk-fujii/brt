@@ -8,19 +8,20 @@ use PDO;
 
 class Users extends Dao{
     // 新規ユーザー
-    static function insertUser($name, $mail, $password_hash, $param){
+    function insertUser($name, $mail, $password_hash, $param, $type){
         return $this->insert([
             "name"=> $name,
             "mail"=> $mail,
             "password_hash"=> $password_hash,
             "url_param"=> $param,
+            "type"=> $type,
             "last_updated_at"=> time(),
             "last_logdin_at"=> time()
         ]);
     }
 
     // パスワードハッシュ更新
-    static function updatePassword_hashFromId($id, $password_hash, $param){
+    function updatePassword_hashFromId($id, $password_hash, $param){
         return $this->update([
             "id"=> $id,
             "password_hash"=> $password_hash,
@@ -30,15 +31,30 @@ class Users extends Dao{
         ]);
     }
 
+    // ログイン日時更新
+    function loginFromId($id){
+        return $this->update([
+            "id"=> $id,
+            "last_logdin_at"=> time()
+        ]);
+    }
+
     // IDから取得
-    static function selectFromId($id){
+    function selectFromId($id){
         return $this->select([
             "id"=> ["=", $id]
         ]);
     }
 
+    // ユーザー名から取得
+    function selectFromName($name){
+        return $this->select([
+            "name"=> ["=", $name]
+        ]);
+    }
+
     // メールアドレスから取得
-    static function selectFromMail($mail){
+    function selectFromMail($mail){
         return $this->select([
             "mail"=> $mail
         ]);

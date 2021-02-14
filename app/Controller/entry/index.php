@@ -16,7 +16,7 @@ $app->get('/entry', function (Request $request, Response $response) {
     
     // パラメータ取得
     if (!empty($request->getQueryParams()["session"])){
-        $param = $request->getUri()->getQueryParams()["session"];
+        $param = $request->getQueryParams()["session"];
         $cMailData = $cMailTable->selectFromParam($param);
     }
 
@@ -60,7 +60,7 @@ $app->post('/entry', function (Request $request, Response $response) {
             return ViewUtil::error($response, $this->view);
         } else{
             $message = ""; // バリデーション
-            if ($input["new-confirmMail"]===$_SESSION["brt-concirmMail"]){ // メールアドレス有効
+            if ($input["new-confirmMail"]!==$_SESSION["brt-confirmMail"]){ // メールアドレス無効
                 $message = $message. "・メールアドレスが謝っています。\n";
             }
             $message = $message. ValidationUtil::checkString("userName", $input["name"], "・", "\n");
@@ -72,17 +72,17 @@ $app->post('/entry', function (Request $request, Response $response) {
                 $message = $message. "・パスワードと、パスワードの確認が一致していません。\n";
             }
             if (!empty($message)){ // 再試行
-                return userEntryCtrl($response, $this->view, $this->db, mb_substr($message, 0, -1), ["mail"=> $input["update-confirmMail"], "name"=> $input["name"]]);
+                return userEntryCtrl($response, $this->view, $this->db, mb_substr($message, 0, -1), ["mail"=> $input["new-confirmMail"], "name"=> $input["name"]]);
             }
             
             // 新規登録
             $userData = $userTable->selectFromMail($input["new-confirmMail"]);
             if (empty($userData)){
                 $param = MemberUtil::makeRandomId();
-                $userId = $userTable->insertUser($input["name"], $input["new-confirmMail"], password_hash($input["password"]), $param);
+                $userId = $userTable->insertUser($input["name"], $input["new-confirmMail"], password_hash($input["password"], PASSWORD_DEFAULT), $param, USER_TYPE_GENERAL);
                 if ($userId!==FALSE){
-                    MemberUtil::login($userId);
-                    $data = ["name"=> $input["name"], "url"=> $request->getUri->getBaseUrl()."/?id=".$param];
+                    MemberUtil::login($userId, $input["name"]);
+                    $data = ["name"=> $input["name"], "url"=> $request->getUri()->getBaseUrl()."/?id=".$param];
                     return $this->view->render($response, 'entry/newOk.twig', $data);
                 } else{
                     return ViewUtil::error($response, $this->view);
@@ -100,7 +100,7 @@ $app->post('/entry', function (Request $request, Response $response) {
             return ViewUtil::error($response, $this->view);
         } else{
             $message = ""; // バリデーション
-            if ($input["update-confirmMail"]===$_SESSION["brt-concirmMail"]){ // メールアドレス有効
+            if ($input["update-confirmMail"]!==$_SESSION["brt-confirmMail"]){ // メールアドレス有効
                 $message = $message. "・メールアドレスが謝っています。\n";
             }
             $message = $message. ValidationUtil::checkString("userName", $input["name"], "・", "\n");
@@ -116,9 +116,9 @@ $app->post('/entry', function (Request $request, Response $response) {
             $userData = $userTable->selectFromMail($input["update-confirmMail"]);
             if (!empty($userData)){
                 $param = MemberUtil::makeRandomId();
-                if ($userTable->updatePassword_hashFromId($userData["id"], password_hash($input["password"]), $param)===TRUE){
+                if ($userTable->updatePassword_hashFromId($userData["id"], password_hash($input["password"], PASSWORD_DEFAULT), $param)===TRUE){
                     MemberUtil::login($userData["id"]);
-                    $data = ["name"=> $input["name"], "url"=> $request->getUri->getBaseUrl()."/?id=".$param];
+                    $data = ["name"=> $input["name"], "url"=> $request->getUri()->getBaseUrl()."/?id=".$param];
                     return $this->view->render($response, 'entry/updateOk.twig', $data);
                 } else{
                     return ViewUtil::error($response, $this->view);
