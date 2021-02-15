@@ -5,27 +5,24 @@ use Slim\Http\Response;
 use Util\ValidationUtil;
 use Util\MemberUtil;
 use Util\MailUtil;
+use Util\ConfirmMailUtil;
 use Model\Dao\Users;
 use Model\Dao\Confirm_mails;
 
 
 // ユーザー登録
 $app->get('/entry', function (Request $request, Response $response) {
-    // メール認証データベース
-	$cMailTable = new Confirm_mails($this->db);
-    
-    // パラメータ取得
+    // パラメータから取得
     if (!empty($request->getQueryParams()["session"])){
         $param = $request->getQueryParams()["session"];
-        $cMailData = $cMailTable->selectFromParam($param);
+        $mail = ConfirmMailUtil::pop($param, "entry");
     }
 
-    if (empty($cMailData)){ // 未確認ならばメールアドレス認証へ
+    if (empty($mail)){ // 未確認ならばメールアドレス認証へ
         return confirmMailCtrl($response, $this->view, $cMailTable);
     } else{ // 確認済みならばユーザー登録またはパスワードリセットへ
-        $_SESSION["brt-confirmParam"] = $cMailData["session_id"];
-        $_SESSION["brt-confirmMail"] = $cMailData["mail"];
-        $cMailTable->deleteFromParam($param);
+        $_SESSION["brt-confirmParam"] = $param;
+        $_SESSION["brt-confirmMail"] = $mail;
         return userEntryCtrl($response, $this->view, $this->db);
     }
 });
@@ -33,24 +30,21 @@ $app->get('/entry', function (Request $request, Response $response) {
 $app->post('/entry', function (Request $request, Response $response) {
     $input = $request->getParsedBody();
 
-    // メール確認データベース
-    $cMailTable = new Confirm_mails($this->db);
-    
     // メールアドレス確認
     if (!empty($input["newMail"])){
         $message = ValidationUtil::checkString("ntut-mail", $input["newMail"]);
         if ($message===""){ // メールアドレスが正常
-            return sendConfirmMailCtrl($request, $response, $this->view, $cMailTable, $input["newMail"]);
+            return sendConfirmMailCtrl($request, $response, $this->view, $input["newMail"]);
         } else{
             $message = ValidationUtil::checkString("mail", $input["mail"]);
             if ($message==="" && $_SESSION["brt-userType"]===USER_TYPE_ADMIN){
-                return sendConfirmMailCtrl($request, $response, $this->view, $cMailTable, $input["mail"]);
+                return sendConfirmMailCtrl($request, $response, $this->view, $input["mail"]);
             } elseif (empty($message)){
                 $message = "このメールアドレスは、認証に利用できません。大学発行のメールアドレスでやり直してください。";
             }
         }
         // 認証再試行
-        return confirmMailCtrl($response, $this->view, $cMailTable, $message);
+        return confirmMailCtrl($response, $this->view, $message);
     
     // ユーザー登録
     } elseif (!empty($input["new-confirmMail"])){
@@ -131,21 +125,16 @@ $app->post('/entry', function (Request $request, Response $response) {
 });
 
 // メールアドレス確認フォーム
-function confirmMailCtrl($response, $view, $cMailTable, $message=""){
+function confirmMailCtrl($response, $view, $message=""){
     $data = ["message"=> $message];
     return $view->render($response, 'entry/index.twig', $data);
 }
 
 // 確認メール送信
-function sendConfirmMailCtrl($request, $response, $view, $cMailTable, $mail){
+function sendConfirmMailCtrl($request, $response, $view, $mail){
     $data = ["mail"=> $mail];
-    $param = MemberUtil::makeRandomId();
-
     // db登録
-    if (!empty($cMailTable->selectFromMail($mail))){ // 古いのは削除
-        $cMailTable->deleteFromMail($mail);
-    }
-    $cMailTable->insertItem($mail, $param);
+    $param = ConfirmMailUtil::push($mail, "entry");
     
     // メール送信
     $title = "BRT メールアドレスの確認";

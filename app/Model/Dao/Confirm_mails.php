@@ -15,11 +15,18 @@ class Confirm_mails extends Dao{
     }
 
     // パラメータから取得
-    function selectFromParam($param){
+    function selectFromParam($param, $target=NULL){
         if (empty($param)){return FALSE;}
-        return $this->select([
-            "session_id"=> $param
-        ]);
+        if ($target===NULL){
+            return $this->select([
+                "session_id"=> $param
+            ]);
+        } else{
+            return $this->select([
+                "target"=> $target,
+                "session_id"=> $param
+            ]);
+        }
     } 
 
     // メールアドレスから取得
@@ -47,9 +54,10 @@ class Confirm_mails extends Dao{
     }
 
     // 新規
-    function insertItem($mail, $param){
+    function insertItem($mail, $param, $target){
         return $this->insert([
             "mail"=> $mail,
+            "target"=> $target,
             "session_id"=> $param,
             "set_at"=> time()
         ]);
