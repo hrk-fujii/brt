@@ -1,0 +1,75 @@
+{% set page_title = "入力内容の確認" %}
+{% set page_description = "BRT - 弁当メニューの入力内容確認。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>入力内容確認</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>入力内容確認</h2>
+    </div>
+
+
+    <div class="h3 text-center">
+        <h3>弁当メニューの入力内容を確認してください。</h3>
+        <p>この内容でよろしければ、確定ボタンを押してください。修正する場合は、修正ボタンを押してください。</p>
+    </div>
+    
+
+    <div class="container px-3 py-3">
+        <div class="row mt-2 mb-0">
+            <div class="col-12 col-sm-4 col-md-2 mt-2 mb-1"><p>販売日時</p></div>
+            <div class ="col-12 col-sm-8 col-md-10 my-2"><p>{{ startSaleStr }}</p></div>
+        </div>
+    </div>
+
+    <div class="container px-3 py-3">
+        <div class="row mt-2 mb-0">
+            <div class="col-12 col-sm-4 col-md-2 mt-2 mb-1"><p>販売期間</p></div>
+            <div class ="col-12 col-sm-8 col-md-10 my-2"><p>{{ saleLengthHour }}時間{{ saleLengthMinute }}分間</p></div>
+        </div>
+    </div>
+
+    <div class="container px-3 py-3">
+        <div class="row mt-2 mb-0">
+            <div class="col-12 col-sm-4 col-md-2 mt-2 mb-1"><p>注文締切日時</p></div>
+            <div class ="col-12 col-sm-8 col-md-10 my-2"><p>{{ orderDeadlineStr }}</p></div>
+        </div>
+    </div>
+
+    {% for i in 0..9 %}
+        {% if attribute(name, i)!="" or attribute(name, i)!=NULL %}
+            <div class="container px-3 py-3">
+                <div class="row my-1">
+                    <div class="col-12 col-sm-4 col-md-2 mt-2 mb-1"><p>弁当名</p></div>
+                    <div class ="col-12 col-sm-8 col-md-10 my-2"><p>{{ attribute(name, i) }}</p></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_discription{{ i }}">内容</div>
+                    <div class ="col-12 col-sm-8 col-md-10 my-2">{{ attribute(discription, i)|nl2br }}</div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    <form method="post" autocomplete="off">
+        <div class="text-center mt-3">
+            <input type="submit" class="btn btn-success mx-3" name="editConfirm" value="確認">
+            <input type="submit" class="btn btn-success mx-3" name="editRetry" value="修正">
+        </div>
+    </form>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

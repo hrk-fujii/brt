@@ -1,0 +1,156 @@
+{% set page_title = "メニュー新規登録" %}
+{% set page_description = "BRT - 弁当メニューの新規登録フォーム。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>弁当メニュー新規登録</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>弁当メニュー新規登録</h2>
+    </div>
+
+
+    <div class="h3 text-center">
+        <h3>販売日時とメニューを入力し、確認ボタンを押してください。</h3>
+    </div>
+    
+
+    <div id="messageText"aria-live="assertive" role="alert">
+        {% if message!=null and message!="" %}
+            <div class="alert-danger p-3">{{ message | nl2br}}</div>
+	    {% endif %}
+    </div>
+
+    <form method="post" autocomplete="off">
+        <div class="container px-3 py-3">
+            <div class="row mt-2 mb-0">
+                <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_startSaleDate">販売日時</label>
+                <div class ="col-12 col-sm-8 col-md-10 my-2">
+                    <select class="mx-2", id="form_startSaleDate" name="startSaleDate" required>
+                        {% for key, val in startSaleDateArray %}
+                            {% if key==startSaleDate %}
+                                <option value="{{ key }}" selected>{{ val }}</option>
+                            {% else %}
+                                <option value="{{ key }}">{{ val }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <select class="mx-2", id="form_startSaleHour" aria-label="販売開始日時", name="startSaleHour" required>
+                        {% for i in 0..23 %}
+                            {% if i==startSaleHour %}
+                                <option value="{{ i }}" selected>{{ i }}時</option>
+                            {% else %}
+                                <option value="{{ i }}">{{ i }}時</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <select class="mx-2", id="form_startSaleMinute" aria-label="販売開始日時", name="startSaleMinute" required>
+                        {% for i in 0..59 %}
+                            {% if i%5==0 and i==startSaleMinute %}
+                                <option value="{{ i }}" selected>{{ i }}分</option>
+                            {% elseif i%5==0 %}
+                                <option value="{{ i }}">{{ i }}分</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="container px-3 py-3">
+            <div class="row my-0">
+                <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_saleLengthHour">販売期間</label>
+                <div class ="col-12 col-sm-8 col-md-10 my-2">
+                    <select class="mx-2", id="saleLengthHour" name="saleLengthHour" required>
+                        {% for i in 0..6 %}
+                            {% if i==saleLengthHour %}
+                                <option value="{{ i }}" selected>{{ i }}時間</option>
+                            {% else %}
+                                <option value="{{ i }}">{{ i }}時間</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <select class="mx-2", id="saleLengthHour" aria-label="販売期間" name="saleLengthMinute" required>
+                        {% for i in 0..59 %}
+                            {% if i%5==0 and i==saleLengthMinute %}
+                                <option value="{{ i }}" selected>{{ i }}分</option>
+                            {% elseif i%5==0 %}
+                                <option value="{{ i }}">{{ i }}分</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container px-3 py-3">
+            <div class="row mt-0 mb-3">
+                <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_orderDeadlineDate">注文締切日時</label>
+                <div class ="col-12 col-sm-8 col-md-10 my-2">
+                    <select class="mx-2", id="orderDeadlineDate" name="orderDeadlineDate" required>
+                        {% for i in 0..9 %}
+                            {% if i==0 and i==orderDeadlineDate %}
+                                <option value="{{ i }}" selected>当日の</option>
+                            {% elseif i==orderDeadlineDate %}
+                                <option value="{{ i }}" selected>{{ i }}日前の</option>
+                            {% elseif i==0 %}
+                                <option value="{{ i }}">当日の</option>
+                            {% else %}
+                                <option value="{{ i }}">{{ i }}日前の</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <select class="mx-2", id="form_orderDeadlineHour" aria-label="注文締切日時", name="orderDeadlineHour" required>
+                        {% for i in 0..23 %}
+                            {% if i==orderDeadlineHour %}
+                                <option value="{{ i }}" selected>{{ i }}時</option>
+                            {% else %}
+                                <option value="{{ i }}">{{ i }}時</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <select class="mx-2", id="form_orderDeadlineMinute" aria-label="注文締切日時", name="orderDeadlineMinute" required>
+                        {% for i in 0..59 %}
+                            {% if i%5==0 and i==orderDeadlineMinute %}
+                                <option value="{{ i }}" selected>{{ i }}分</option>
+                            {% elseif i%5==0 %}
+                                <option value="{{ i }}">{{ i }}分</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        {% for i in 0..9 %}
+            <div class="container px-3 py-3">
+                <div class="row mb-1">
+                    <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_name{{ i }}">弁当名</label>
+                    <div class ="col-12 col-sm-8 col-md-10 my-2"><input class="w-100" id="form_name{{ i }}" type="text" name="name[{{ i }}]" value="{{ attribute(name, i) }}"></div>
+                </div>
+                <div class="row mb-2">
+                    <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_discription{{ i }}">内容</label>
+                    <div class ="col-12 col-sm-8 col-md-10 my-2"><textarea class="w-100" id="form_discription{{ i }}" rows="5" name="discription[{{ i }}]">{{ attribute(discription, i) }}</textarea></div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="text-center mt-3">
+            <p>確認ボタンを押して、入力内容の確認に進みます。</p>
+            <input type="submit" class="btn btn-success" name="goToConfirm" value="確認">
+        </div>
+    </form>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}
