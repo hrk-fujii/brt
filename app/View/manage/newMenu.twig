@@ -134,11 +134,11 @@
         {% for i in 0..9 %}
             <div class="container px-3 py-3">
                 <div class="row mb-1">
-                    <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_name{{ i }}">弁当名</label>
+                    <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_name{{ i }}">メニュー</label>
                     <div class ="col-12 col-sm-8 col-md-10 my-2"><input class="w-100" id="form_name{{ i }}" type="text" name="name[{{ i }}]" value="{{ attribute(name, i) }}"></div>
                 </div>
                 <div class="row mb-2">
-                    <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_discription{{ i }}">内容</label>
+                    <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_discription{{ i }}">説明</label>
                     <div class ="col-12 col-sm-8 col-md-10 my-2"><textarea class="w-100" id="form_discription{{ i }}" rows="5" name="discription[{{ i }}]">{{ attribute(discription, i) }}</textarea></div>
                 </div>
             </div>

@@ -5,6 +5,7 @@ use Slim\Http\Response;
 use Util\ValidationUtil;
 use Util\MailUtil;
 use Model\Dao\Users;
+use Model\Dao\Bento;
 
 
 
@@ -28,11 +29,11 @@ $app->post('/manage/menu', function (Request $request, Response $response) {
     
     // 編集結果書き込み
     } elseif (!empty($input["editSubmit"])){
-        writeMenuCtrl($response, $this->view, $this->db, $input, $input["editSubmit"]);
+        writeMenuCtrl($response, $this->view, $this->db, $input["editSubmit"]);
     
     // 新規登録
     } elseif (!empty($input["newSubmit"])){
-        writeMenuCtrl($response, $this->view, $this->db, $input);
+        writeMenuCtrl($response, $this->view, $this->db);
     }
 });
 
@@ -41,8 +42,18 @@ $app->post('/manage/menu/new', function (Request $request, Response $response) {
 
     // 編集直後なら
     if (!empty($input["goToConfirm"])){
-        $_SESSION["brt-confirmEditMenu"] = $input;
-        return confirmEditMenuCtrl($response, $this->view);
+        // バリデーションとセッション変数セット
+        $message = setSessionFromEditMenu($input);
+        if (empty($message)){
+            return confirmEditMenuCtrl($response, $this->view);
+        } else{
+            return editMenuCtrl($response, $this->view, $input, NULL, $message);
+
+        }
+    
+    // 確定動作
+    } elseif (!empty($input["editSubmit"])){
+        return writeMenuCtrl($response, $this->view, $this->db);
     }
 });
 
@@ -50,6 +61,7 @@ $app->post('/manage/menu/new', function (Request $request, Response $response) {
 function editMenuCtrl($response, $view, $data=[], $menuId=NULL, $message=""){
     $data["menuId"] = $menuId;
     $data["startSaleDateArray"] = [];
+    $data["message"] = $message;
     if (empty($data["startSaleHour"])){
         $data["startSaleHour"] = DEFAULT_START_SALE_HOUR;
     }
@@ -85,9 +97,22 @@ function editMenuCtrl($response, $view, $data=[], $menuId=NULL, $message=""){
 // メニュー確認フォーム
 function confirmEditMenuCtrl($response, $view){
     $data = $_SESSION["brt-confirmEditMenu"];
-    $startSaleAt = $_SESSION["brt-confirmEditMenu"]["startSaleDate"] + $_SESSION["brt-confirmEditMenu"]["startSaleHour"] * 60 * 60 + $_SESSION["brt-confirmEditMenu"]["startSaleMinute"] * 60;
-    $data["startSaleStr"] = date("n月j日", $startSaleAt). DAY_JP[date("w", $startSaleAt)]. "曜日". date("H時i分", $startSaleAt);
-    $orderDeadlineAt = $_SESSION["brt-confirmEditMenu"]["startSaleDate"] - $_SESSION["brt-confirmEditMenu"]["orderDeadlineDate"] * 60 * 60 * 24 + $_SESSION["brt-confirmEditMenu"]["orderDeadlineHour"] * 60 * 60 + $_SESSION["brt-confirmEditMenu"]["orderDeadlineMinute"] * 60;
-    $data["orderDeadlineStr"] = date("n月j日", $orderDeadlineAt). DAY_JP[date("w", $orderDeadlineAt)]. "曜日". date("H時i分", $orderDeadlineAt);
+
     return $view->render($response, 'manage/confirmEditMenu.twig', $data);
+}
+
+// メニュー書き込み
+function writeMenuCtrl($response, $view, $db, $menuId=NULL){
+    $bentoTable = new Bento($db);
+    $data = $_SESSION["brt-confirmEditMenu"];
+    foreach ($data["name"] as $k=> $v){
+        if (!empty($data["name"][$k])){
+            if (!empty($data["menuId"]) && $data["menuId"]===$menuId && !empty($bentoTable->selectFromId($data["menuId"]))){
+                return $bentoTable->updateFromId($data["menuId"], $data["name"][$k], $data["discription"][$k], $data["orderDeadlineAt"], $data["startSaleAt"], $data["endSaleAt"], NULL);
+            } else{
+                $ret = $bentoTable->insertItem($data["name"][$k], $data["discription"][$k], $data["orderDeadlineAt"], $data["startSaleAt"], $data["endSaleAt"], NULL);
+            }
+        }
+    }
+    var_dump($ret);
 }
