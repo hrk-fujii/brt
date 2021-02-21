@@ -107,16 +107,16 @@ $app->post('/entry', function (Request $request, Response $response) {
                 $message = $message. "・パスワードと、パスワードの確認が一致していません。\n";
             }
             if (!empty($message)){ // 再試行
-                return userEntryCtrl($response, $this->view, $this->db, mb_substr($message, 0, -1), ["mail"=> $input["update-confirmMail"], "name"=> $input["name"]]);
+                return userEntryCtrl($response, $this->view, $this->db, mb_substr($message, 0, -1), ["mail"=> $input["update-confirmMail"]]);
             }
             
             // 更新
             $userData = $userTable->selectFromMail($input["update-confirmMail"]);
             if (!empty($userData)){
                 $param = MemberUtil::makeRandomId();
-                if ($userTable->updatePassword_hashFromId($userData["id"], password_hash($input["password"], PASSWORD_DEFAULT), $param)===TRUE){
+                if ($userTable->updatePassword_hashFromId($userData["id"], password_hash($input["password"], PASSWORD_DEFAULT), $param)==TRUE){
                     MemberUtil::login($userData["id"], $userData["mail"]);
-                    $data = ["mail"=> $input["mail"], "lastName"=> $input["lastName"], "firstName"=> $input["firstName"], "url"=> $request->getUri()->getBaseUrl()."/?id=".$param];
+                    $data = ["mail"=> $input["update-confirmMail"], "lastName"=> $userData["last_name"], "firstName"=> $userData["first_name"], "url"=> $request->getUri()->getBaseUrl()."/?id=".$param];
                     return $this->view->render($response, 'entry/updateOk.twig', $data);
                 } else{
                     return ViewUtil::error($response, $this->view);
