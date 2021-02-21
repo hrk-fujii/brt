@@ -8,10 +8,12 @@ use PDO;
 
 class Users extends Dao{
     // 新規ユーザー
-    function insertUser($name, $mail, $password_hash, $param, $type){
+    function insertUser($mail, $lastName, $firstName, $studentNo, $password_hash, $param, $type){
         return $this->insert([
-            "name"=> $name,
+            "last_name"=> $lastName,
+            "first_name"=> $firstName,
             "mail"=> $mail,
+            "student_no"=> $studentNo,
             "password_hash"=> $password_hash,
             "url_param"=> $param,
             "type"=> $type,

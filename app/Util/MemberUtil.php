@@ -5,13 +5,13 @@ use Model\Dao\Users;
 
 class MemberUtil{
 	// ログイン処理
-	static function login($id, $name){
+	static function login($id, $mail){
 		global $container;
 		$userTable = new Users($container->get("db"));
 		$userData = $userTable->selectFromId($id);
-		if (!empty($userData) && $userData["name"]===$name){
+		if (!empty($userData) && $userData["mail"]===$mail){
 			$_SESSION["brt-userId"] = $id;
-			$_SESSION["brt-userName"] = $name;
+			$_SESSION["brt-userMail"] = $mail;
 			$userTable->loginFromId($id);
 			return TRUE;
 		} else{
