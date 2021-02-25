@@ -1,0 +1,40 @@
+{% set page_title = "メニュー登録完了" %}
+{% set page_description = "BRT - 新規弁当メニュー登録の完了通知。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>メニュー登録完了</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>メニュー登録完了</h2>
+    </div>
+
+    <div class="text-center">
+        <h3>弁当メニューを登録しました。</h3>
+        <p>続けて登録ボタンを押すと、さらにメニューを追加できます。<br>メニュー管理ボタンを押すと、現在登録されているメニューの管理ができます。</p>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-6 text-center text-sm-right my-2 px-sm-3">
+                <a class="btn btn-success text-white px-1 px-sm-3 py-1" role="button" href="{{ get_base_path() }}/manage/menu/new">続けて登録</a>
+            </div>
+            <div class="col-6 text-center text-sm-left my-2 px-sm-3">
+                <a class="btn btn-success text-white px-1 px-sm-3 py-1" role="button" href="{{ get_base_path() }}/manage/menu">メニュー管理</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

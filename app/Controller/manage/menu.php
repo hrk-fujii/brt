@@ -11,30 +11,28 @@ use Model\Dao\Bento;
 
 // ユーザー登録
 $app->get('/manage/menu', function (Request $request, Response $response) {
-    $data = [];
-    return $this->view->render($response, 'manage/menu.twig', $data);
+    $_SESSION["brt-confirmEditMenu"] = [];
+    return menuManageCtrl($response, $this->view, $this->db);
 });
 
 $app->get('/manage/menu/new', function (Request $request, Response $response) {
-    return editMenuCtrl($response, $this->view);
+    $_SESSION["brt-confirmEditMenu"] = [];
+    return editNewMenuCtrl($response, $this->view);
 });
 
 
 $app->post('/manage/menu', function (Request $request, Response $response) {
     $input = $request->getParsedBody();
 
-    // 編集なら
-    if (!empty($input["editTarget"])){
-        editMailCtrl($response, $this->view, $input, $input["editTarget"]);
+    // 削除なら
+    if (!empty($input["deleteTarget"])){
+        return deleteMenuCtrl($response, $this->view, $this->db, $input["deleteTarget"]);
     
-    // 編集結果書き込み
-    } elseif (!empty($input["editSubmit"])){
-        writeMenuCtrl($response, $this->view, $this->db, $input["editSubmit"]);
-    
-    // 新規登録
-    } elseif (!empty($input["newSubmit"])){
-        writeMenuCtrl($response, $this->view, $this->db);
+    // 表示日付変更なら
+    } elseif (!empty($input["showSaleDate"])){
+        return menuManageCtrl($response, $this->view, $this->db, $input["showSaleDate"]);
     }
+
 });
 
 $app->post('/manage/menu/new', function (Request $request, Response $response) {
@@ -47,9 +45,13 @@ $app->post('/manage/menu/new', function (Request $request, Response $response) {
         if (empty($message)){
             return confirmEditMenuCtrl($response, $this->view);
         } else{
-            return editMenuCtrl($response, $this->view, $input, NULL, $message);
+            return editNewMenuCtrl($response, $this->view, $input, $message);
 
         }
+    
+    // 編集やり直し動作
+    } elseif (!empty($input["reEdit"])){
+        return editNewMenuCtrl($response, $this->view, $_SESSION["brt-confirmEditMenu"]);
     
     // 確定動作
     } elseif (!empty($input["editSubmit"])){
@@ -57,30 +59,29 @@ $app->post('/manage/menu/new', function (Request $request, Response $response) {
     }
 });
 
-// メニュー編集フォーム
-function editMenuCtrl($response, $view, $data=[], $menuId=NULL, $message=""){
-    $data["menuId"] = $menuId;
+// 新規メニュー編集フォーム
+function editNewMenuCtrl($response, $view, $data=[], $message=""){
     $data["startSaleDateArray"] = [];
     $data["message"] = $message;
-    if (empty($data["startSaleHour"])){
+    if (!isset($data["startSaleHour"])){
         $data["startSaleHour"] = DEFAULT_START_SALE_HOUR;
     }
-    if (empty($data["startSaleMinute"])){
+    if (!isset($data["startSaleMinute"])){
         $data["startSaleMinute"] = DEFAULT_START_SALE_MINUTE;
     }
-    if (empty($data["saleLengthHour"])){
+    if (!isset($data["saleLengthHour"])){
         $data["saleLengthHour"] = DEFAULT_SALE_LENGTH_HOUR;
     }
-    if (empty($data["saleLengthMinute"])){
+    if (!isset($data["saleLengthMinute"])){
         $data["saleLengthMinute"] = DEFAULT_SALE_LENGTH_MINUTE;
     }
-    if (empty($data["orderDeadlineDate"])){
+    if (!isset($data["orderDeadlineDate"])){
         $data["orderDeadlineDate"] = DEFAULT_ORDER_DEADLINE_DATE_BEFORE;
     }
-    if (empty($data["orderDeadlineHour"])){
+    if (!isset($data["orderDeadlineHour"])){
         $data["orderDeadlineHour"] = DEFAULT_ORDER_DEADLINE_HOUR;
     }
-    if (empty($data["orderDeadlineMinute"])){
+    if (!isset($data["orderDeadlineMinute"])){
         $data["orderDeadlineMinute"] = DEFAULT_ORDER_DEADLINE_MINUTE;
     }
     for ($count = 0; $count <= 10; $count++){
@@ -102,17 +103,47 @@ function confirmEditMenuCtrl($response, $view){
 }
 
 // メニュー書き込み
-function writeMenuCtrl($response, $view, $db, $menuId=NULL){
+function writeMenuCtrl($response, $view, $db){
     $bentoTable = new Bento($db);
     $data = $_SESSION["brt-confirmEditMenu"];
     foreach ($data["name"] as $k=> $v){
         if (!empty($data["name"][$k])){
-            if (!empty($data["menuId"]) && $data["menuId"]===$menuId && !empty($bentoTable->selectFromId($data["menuId"]))){
-                return $bentoTable->updateFromId($data["menuId"], $data["name"][$k], $data["discription"][$k], $data["orderDeadlineAt"], $data["startSaleAt"], $data["endSaleAt"], NULL);
-            } else{
-                $ret = $bentoTable->insertItem($data["name"][$k], $data["discription"][$k], $data["orderDeadlineAt"], $data["startSaleAt"], $data["endSaleAt"], NULL);
-            }
+            $ret = $bentoTable->insertItem($data["name"][$k], $data["discription"][$k], $data["orderDeadlineAt"], $data["startSaleAt"], $data["endSaleAt"], NULL);
         }
     }
-    var_dump($ret);
+    
+    // 一時データを削除して成功ビューへ
+    $_SESSION["brt-confirmEditMenu"] = [];
+    return $view->render($response, 'manage/newMenuOk.twig', $data);
+}
+
+function menuManageCtrl($response, $view, $db, $saleDate=NULL){
+    if ($saleDate===NULL){ // 何もなければ今日の日付
+        $saleDate = strtotime(date("Y-m-d", time()));
+    }
+    $data = [];
+    $bentoTable = new Bento($db);
+    $data["bentoArray"] = $bentoTable->selectFromStartSaleAt($saleDate, $saleDate + 60 * 60 * 24 - 1);
+    $data["saleDateArray"] = [];
+    foreach ($data["bentoArray"] as &$b){
+        $b["startSaleStr"] = date("n/j H:i", $b["start_sale_at"]);
+        $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);
+        $b["orderDeadlineStr"] = date("n/j H:i", $b["order_deadline_at"]);
+    }
+    $data["saleDateArray"] = [];
+    for ($count = 0; $count <= 10; $count++){
+        $val = strtotime(date("Y-m-d", time() + (60*60*24*$count)));
+        array_push($data["saleDateArray"], ["unix"=> $val, "str"=> date("n月j日", $val). DAY_JP[date("w", $val)]. "曜日"]);
+    }
+    return $view->render($response, 'manage/menu.twig', $data);
+}
+
+function deleteMenuCtrl($response, $view, $db, $deleteTarget){
+    $bentoTable = new Bento($db);
+    $time = $bentoTable->selectFromId($deleteTarget)["start_sale_at"];
+    $date = strtotime(date("Y-m-d", $time));
+    // メニュー削除
+    $bentoTable->deleteFromId($deleteTarget);
+
+    return menuManageCtrl($response, $view, $db, $date);
 }

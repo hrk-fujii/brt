@@ -55,7 +55,7 @@ abstract class Dao {
 	 *
 	 * 情報を取得する汎用SELECT関数
 	 *
-	 * @param array $param WHERE句として指定したい条件を連想配列で指定します。値に%があると、部分一致などもできます。また、[string(演算子), 数値]で数値比較、NULLで、NULLと比較できます。
+	 * @param array $param WHERE句として指定したい条件を連想配列で指定します。値に%があると、部分一致などもできます。[string(演算子), 数値]で数値比較、[数値,数値]で範囲指定、NULLで、NULLと比較できます。
 	 * @param string $sort ソートしたいカラム名を指定します
 	 * @param string $order 昇順=ASC 降順=DESCを指定します
 	 * @param int $limit 取得件数を指定します。デフォルト10件
@@ -80,6 +80,8 @@ abstract class Dao {
 				$queryBuilder->setParameter(":$key", $val);
 			} elseif ($val===NULL){ //NULLを評価
 				$queryBuilder->andWhere($key . " IS NULL");
+			} elseif (count($val)===2 && is_numeric($val[0]) && is_numeric($val[1])){
+				$queryBuilder->andWhere($key . " BETWEEN $val[0] AND $val[1]");
 			} elseif (count($val)===2 && is_numeric($val[1])){
 				$queryBuilder->andWhere($key . " $val[0] $val[1]");
 			}
