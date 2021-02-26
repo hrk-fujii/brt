@@ -6,6 +6,7 @@ use Util\ValidationUtil;
 use Util\MemberUtil;
 use Util\MailUtil;
 use Util\ConfirmMailUtil;
+use Util\ViewUtil;
 use Model\Dao\Users;
 use Model\Dao\Confirm_mails;
 
@@ -16,6 +17,9 @@ $app->get('/entry', function (Request $request, Response $response) {
     if (!empty($request->getQueryParams()["session"])){
         $param = $request->getQueryParams()["session"];
         $mail = ConfirmMailUtil::pop($param, "entry");
+        if (empty($mail)){ // タイムアウト
+            return ViewUtil::error($response, $this->view, "この認証用URLは、有効期限が切れています。");
+        }
     }
 
     if (empty($mail)){ // 未確認ならばメールアドレス認証へ
