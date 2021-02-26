@@ -45,17 +45,3 @@ $app->get('/', function (Request $request, Response $response) {
     }
     return $this->view->render($response, 'top/index.twig', $data);
 });
-
-$app->post('/', function (Request $request, Response $response) {
-    $input = $request->getParsedBody();
-
-    // 削除なら
-    if (!empty($input["deleteTarget"])){
-        return deleteMenuCtrl($response, $this->view, $this->db, $input["deleteTarget"]);
-    
-    // 表示日付変更なら
-    } elseif (!empty($input["showSaleDate"])){
-        return menuManageCtrl($response, $this->view, $this->db, $input["showSaleDate"]);
-    }
-
-});

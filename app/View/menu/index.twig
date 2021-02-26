@@ -1,5 +1,5 @@
-{% set page_title = "トップ" %}
-{% set page_description = "筑波技術大学春日キャンパス学食弁当予約取次システム（Bento Reservation Terminal）トップページ。" %}
+{% set page_title = "メニュー / 予約" %}
+{% set page_description = "BRT - 弁当メニューの表示と予約。" %}
 
 {#レイアウト継承#}
 {% extends "layout/layout.twig" %}
@@ -12,21 +12,35 @@
 {% block page_content %}
 
     <div class="jumbotron bg-warning text-center d-none d-sm-block">
-        {% if day!=NULL %}
-            <h2>{{ day }}のメニュー</h2>
-        {% else %}
-            <h2>表示できるメニューがありません</h2>
-        {% endif %}
+        <h2>メニュー表示／予約</h2>
     </div>
     <div class="bg-warning py-3 text-center d-sm-none">
-        {% if day!=NULL %}
-            <h2>{{ day }}のメニュー</h2>
-        {% else %}
-            <h2>表示できるメニューがありません</h2>
-        {% endif %}
+        <h2>メニュー表示／予約</h2>
     </div>
 
+    <p>日付ごとのメニューを表示しています。販売日を選択して表示ボタンを押すと、選択した日付に更新されます。{% if attribute(session, "brt-userId")==NULL %}弁当の予約には、ログインが必要です。{% endif %}</p>
+    
+    <div class="container my-3">
+        <div class="row my-3">
+            <div class="container col-12 col-sm-10 order-sm-1"><form method="post" autocomplete="off">
+                <div class="row my-2">
+                    <div class="col-12">
+                        <label class="mx-1 my-auto">表示する販売日<select class="mx-1 my-auto" name="showSaleDate" required>
+                            {% for d in saleDateArray %}
+                                {% if d.unix==saleDate %}
+                                    <option value="{{ d.unix }}" selected>{{ d.str }}</option>
+                                {% else %}
+                                    <option value="{{ d.unix }}">{{ d.str }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select></label>
+                        <input type="submit" class="button btn-success text-white mx-1" name="submit" value="表示">
+                    </div>
+                </div>
+            </form></div>
+        </div>
 
+    </div>
     {% for b in bentoArray %}
         <div class="container my-3">
             <form method="post" autocomplete="off">
