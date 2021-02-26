@@ -1,9 +1,13 @@
 <?php
+
+use Util\ViewUtil;
+
 // Application middleware
 // e.g: $app->add(new \Slim\Csrf\Guard);
 
 
 $app->add(new DataBaseTransactionHandler($app->getContainer()));
+$app->add(new AccessHandler($app->getContainer()));
 
 class DataBaseTransactionHandler{
 
@@ -22,6 +26,26 @@ class DataBaseTransactionHandler{
 		$this->container->get("db")->commit();
 		$this->container->get("logger")->info("DB: commit transaction");
 		return $response;
+	}
+}
+
+class AccessHandler{
+
+	private $container;
+
+	public function __construct($container) {
+		$this->container = $container;
+	}
+
+	// アクセス制御
+	public function __invoke($request, $response, $next){
+		$path = explode("/",$request->getUri()->getPath());
+		
+		// 管理画面はadminのみ
+		if (!empty($path[1]) && $path[1]==="manage" && (int)$_SESSION["brt-userType"]!==USER_TYPE_ADMIN){
+			return ViewUtil::error($response, $this->container->get("view"), "このページにアクセスするには、管理者ユーザーでログインしてください。");
+		}
+		return $next($request, $response);
 	}
 }
 
