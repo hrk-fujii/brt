@@ -84,6 +84,8 @@ abstract class Dao {
 				$queryBuilder->andWhere($key . " BETWEEN $val[0] AND $val[1]");
 			} elseif (count($val)===2 && is_numeric($val[1])){
 				$queryBuilder->andWhere($key . " $val[0] $val[1]");
+			} else{
+				return FALSE;
 			}
 		}
 

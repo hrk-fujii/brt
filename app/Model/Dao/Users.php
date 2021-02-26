@@ -48,13 +48,6 @@ class Users extends Dao{
         ]);
     }
 
-    // ユーザー名から取得
-    function selectFromName($name){
-        return $this->select([
-            "name"=> ["=", $name]
-        ]);
-    }
-
     // メールアドレスから取得
     function selectFromMail($mail){
         return $this->select([

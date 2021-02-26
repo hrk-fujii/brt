@@ -12,6 +12,7 @@ class MemberUtil{
 		if (!empty($userData) && $userData["mail"]===$mail){
 			$_SESSION["brt-userId"] = $id;
 			$_SESSION["brt-userMail"] = $mail;
+			$_SESSION["brt-userType"] = $userData["type"];
 			$userTable->loginFromId($id);
 			return TRUE;
 		} else{

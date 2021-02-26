@@ -40,9 +40,9 @@ $app->post('/entry', function (Request $request, Response $response) {
         if ($message===""){ // メールアドレスが正常
             return sendConfirmMailCtrl($request, $response, $this->view, $input["newMail"]);
         } else{
-            $message = ValidationUtil::checkString("mail", $input["mail"]);
-            if ($message==="" && $_SESSION["brt-userType"]===USER_TYPE_ADMIN){
-                return sendConfirmMailCtrl($request, $response, $this->view, $input["mail"]);
+            $message = ValidationUtil::checkString("mail", $input["newMail"]);
+            if (empty($message) && (int)$_SESSION["brt-userType"]===USER_TYPE_ADMIN){
+                return sendConfirmMailCtrl($request, $response, $this->view, $input["newMail"]);
             } elseif (empty($message)){
                 $message = "このメールアドレスは、認証に利用できません。大学発行のメールアドレスでやり直してください。";
             }
