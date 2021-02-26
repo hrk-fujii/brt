@@ -1,0 +1,80 @@
+{% set page_title = "ユーザー登録" %}
+{% set page_description = "BRT - 新規ユーザー登録フォーム。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>ユーザー登録</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>ユーザー登録</h2>
+    </div>
+
+
+    <div class="h3 text-center">
+        <h3>必要事項を入力し、登録ボタンを押してください。</h3>
+    </div>
+    
+
+    <div id="messageText"aria-live="assertive" role="alert">
+        {% if message!=null and message!="" %}
+            <div class="alert-danger p-3">{{ message | nl2br}}</div>
+	    {% endif %}
+    </div>
+
+    <form method="post" autocomplete="off">
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_mail"> メールアドレス</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_mail" type="text" name="new-confirmMail" value="{{ mail }}" required>
+            </div>
+        </div>
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_lastName"> セイ(カタカナ)</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_lastName" type="text" name="lastName" value="{{ lastName }}" required>
+            </div>
+        </div>
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_firstName"> メイ(カタカナ)</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_firstName" type="text" name="firstName" value="{{ firstName }}" required>
+            </div>
+        </div>
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_studentNo"> 学籍番号(学生のみ)</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_studentNo" type="text" name="studentNo" value="{{ studentNo }}">
+            </div>
+        </div>
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_password"> パスワード</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_password" type="password" name="password" required>
+            </div>
+        </div>
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_confirmPassword"> パスワードの確認</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_confirmPassword" type="password" name="confirmPassword" required>
+            </div>
+        </div>
+        <div class="text-center">
+            <p>登録ボタンを押すと、すぐに上記内容で登録されます。</p>
+            <input type="submit" class="btn btn-success" value="登録">
+        </div>
+    </form>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

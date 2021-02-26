@@ -1,0 +1,38 @@
+{% set page_title = "送信完了" %}
+{% set page_description = "BRT - メールアドレス確認、URL送信完了。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>送信完了</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>送信完了</h2>
+    </div>
+
+
+    <div class="h3 text-center">
+        <h3>確認用URLを記載したメールを送信いたしました。メール本文に記載のURLは、有効期限が発行後3分間となっております。有効期限内にアクセスいただき、お手続きください。</h3>
+    </div>
+    
+
+    <div class="container py-5">
+        <div class="row mb-3">
+            <p class="col-12 col-sm-4 col-md-3"> メールアドレス</p>
+            <p class ="col-12 col-sm-8 col-md-9"> {{ mail }}</p>
+        </div>
+    </div>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

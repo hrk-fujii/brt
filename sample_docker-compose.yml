@@ -25,7 +25,13 @@ services:
             DB_HOST: "mariadb"
             DB_USER: "[user]"
             DB_NAME: "brt"
-            DB_PASS: "[password]"
+            DB_PASS: "[db's password]"
+            MAIL_HOST: "[smtp server name]"
+            MAIL_USERBASE: "[smtp user name base (@example.com)]"
+            MAIL_PASSWORD: "[smtp password]"
+            MAIL_SECURE: "[smtp secure type]"
+            MAIL_PORT: "[smtp port no]"
+            MAIL_ADDRESSBASE: "[from address base (@example.com)]"
         volumes:
             - logs:/var/www/logs
             - ./www:/var/www

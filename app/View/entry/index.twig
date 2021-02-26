@@ -1,0 +1,50 @@
+{% set page_title = "メールアドレスの確認" %}
+{% set page_description = "BRT - 重要な設定変更のためのメールアドレス確認。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>メールアドレスの確認</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>メールアドレスの確認</h2>
+    </div>
+
+
+    <div class="h3 text-center">
+        <h3>大学発行のメールアドレスを入力し、送信ボタンを押してください。</h3>
+    </div>
+    
+
+    <div id="messageText"aria-live="assertive" role="alert">
+        {% if message!=null and message!="" %}
+            <div class="alert-danger p-3">{{ message | nl2br}}</div>
+	    {% endif %}
+    </div>
+
+    <form method="post" autocomplete="off">
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_mail"> メールアドレス</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_mail" type="text" name="newMail" value="{{ userName }}" required>
+            </div>
+        </div>
+        <div class="text-center">
+            <p>上記アドレス宛に、認証URLを記載したメールを送信いたします。URLの有効期間は、発行後3分間です。</p>
+            <input type="submit" class="btn btn-success" value="送信">
+        </div>
+    </form>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

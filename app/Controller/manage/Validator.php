@@ -1,6 +1,6 @@
 <?php
 
-function setSessionFromEditMenu($input){
+function setSessionFromEditMenu($input, $targetId=NULL){
     $message = "";
     $startSaleAt = $input["startSaleDate"] + $input["startSaleHour"] * 60 * 60 + $data["startSaleMinute"] * 60;
     if ($startSaleAt <= time()){
@@ -39,5 +39,8 @@ function setSessionFromEditMenu($input){
     if ($message===""){
         $_SESSION["brt-confirmEditMenu"] = $input;
     }
+    if ($targetId!==NULL){
+        $_SESSION["brt-confirmEditMenu"]["menuId"] = $targetId;
+    }        
     return substr($message, 0, -1);
 }

@@ -3,5 +3,5 @@
 *.cache
 log/*
 
-./workspace.code-workspace
-./.idea/
+/workspace.code-workspace
+/.idea/

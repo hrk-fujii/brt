@@ -27,7 +27,7 @@ class Bento extends Dao{
         ]);
     }
 
-        // アイテム追加
+    // アイテム追加
     function insertItem($name, $discription, $orderDeadlineAt, $startSaleAt, $endSaleAt, $stock){
         return $this->insert([
             "name"=> $name,
@@ -37,5 +37,17 @@ class Bento extends Dao{
             "end_sale_at"=> $endSaleAt,
             "stock"=> $stock
         ]);
+    }
+
+    // 販売日時指定抽出
+    function selectFromStartSaleAt($start, $end){
+        return $this->select([
+            "start_sale_at"=> [$start, $end]
+        ], $sort = "id", $order = "ASC", $limit = 50, $fetch_all = TRUE);
+    }
+
+    // IDから削除
+    function deleteFromId($id){
+        return $this->delete(["id"=> $id]);
     }
 }
