@@ -1,5 +1,5 @@
-{% set page_title = "Hello World!" %}
-{% set page_description = "トップページです。" %}
+{% set page_title = "トップ" %}
+{% set page_description = "筑波技術大学春日キャンパス学食弁当予約取次システム（Bento Reservation Terminal）トップページ。" %}
 
 {#レイアウト継承#}
 {% extends "layout/layout.twig" %}
@@ -11,8 +11,43 @@
 {# ページ本文 #}
 {% block page_content %}
 
-	<p> ようこそslimフレームワークの世界へ！</p>
-	<p> さああなたもslimを使ってウェブアプリの開発を始めましょう！</p>
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        {% if day!=NULL %}
+            <h2>{{ day }}のメニュー</h2>
+        {% else %}
+            <h2>表示できるメニューがありません</h2>
+        {% endif %}
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        {% if day!=NULL %}
+            <h2>{{ day }}のメニュー</h2>
+        {% else %}
+            <h2>表示できるメニューがありません</h2>
+        {% endif %}
+    </div>
+
+
+    {% for b in bentoArray %}
+        <div class="container my-3">
+            <form method="post" autocomplete="off">
+                <div class="row">
+                    <div class="col-12 bg-dark text-white px-2 py-1">
+                        <p class="px-0 py-0 my-0">{{ b.name }}</p>
+                    </div>
+                    <div class="col-12 col-sm-8 px-1 py-1">
+                        <p>{{ b.discription|nl2br }}</p>
+                    </div>
+                    <div class="col-12 col-sm-4 px-1 py-1">
+                        <p>{{ b.startSaleStr }}から{{ b.saleLengthMinuteOnly }}分間販売</p>
+                        <p>{{ b.orderDeadlineStr }}予約締切</p>
+                    </div>
+                    <div class="col-12 text-right px-1 py-1">
+                        <button type="submit" name="orderTarget" value="{{ b.id }}" class="button btn-success text-white px-1 py-1">予約</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% endfor %}
 
 {% endblock %}
 
