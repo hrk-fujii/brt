@@ -25,6 +25,9 @@ $app->post('/menu', function (Request $request, Response $response) {
 });
 
 function showMenuCtrl($response, $view, $db, $saleDate=NULL){
+    // 多重予約ロックを解除
+    $_SESSION["brt-orderReady"] = TRUE;
+    
     if ($saleDate===NULL){ // 何もなければ今日の日付
         $saleDate = strtotime(date("Y-m-d", time()));
     }

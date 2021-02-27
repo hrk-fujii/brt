@@ -9,7 +9,7 @@ use PHPMailer\PHPMailer\Exception;
 class MailUtil{
 	// 定数
 	const FROM_TEXT = [
-		"no-reply"=> "BRT受付システム"
+		"no-reply"=> "BRT自動配信システム"
 	];
 	
 	// メール一斉送信（タイトル、本文、差出アドレス、宛先配列）

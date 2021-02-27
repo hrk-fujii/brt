@@ -10,6 +10,9 @@ use Model\Dao\Bento;
 
 // トップページ表示
 $app->get('/', function (Request $request, Response $response) {
+    // 多重予約ロックを解除
+    $_SESSION["brt-orderReady"] = TRUE;
+    
     $bentoTable = new Bento($this->db);
     // 日付の設定。今日販売の弁当がなければ最短販売日の弁当
     $saleDate = strtotime(date("Y-m-d", time()));
