@@ -7,12 +7,50 @@
 				</button>
 				<div class="collapse navbar-collapse" id="navbarNavDropdown">
 					<ul class="navbar-nav mr-auto">
-						<li class="nav-item">
+						<li class="nav-item d-none d-sm-block">
 							<a class="nav-link" href="{{ get_base_path() }}/">TOP</a>
+						</li>
+						{# スマホのログインとユーザー登録 #}
+						{% if attribute(session, "brt-userId")==NULL %}
+							<li class="nav-item d-sm-none">
+								<a class="nav-link" href="{{ get_base_path() }}/login">ログイン</a>
+							</li>
+							<li class="nav-item d-sm-none">
+								<a class="nav-link" href="{{ get_base_path() }}/entry">ユーザー登録</a>
+							</li>
+						{% endif %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ get_base_path() }}/menu">メニュー・予約</a>
+						</li>
+						{% if attribute(session, "brt-userId")!=NULL %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ get_base_path() }}/mypage">マイページ</a>
+							</li>
+						{% endif %}
+						{% if attribute(session, "brt-userType")==2 %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ get_base_path() }}/manage">サイト管理</a>
+							</li>
+						{% endif %}
+						{# スマホ用ログアウト #}
+						{% if attribute(session, "brt-userId") %}
+							<li class="nav-item d-sm-none">
+								<a class="nav-link" href="{{ get_base_path() }}/logout">ログアウト</a>
+							</li>
+						{% endif %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ get_base_path() }}/help">ヘルプ</a>
 						</li>
 					</ul>
 				</div>
-				<p class="h2"><a class="text-white" href="{{ get_base_path() }}/">BRT</a></p>
+				<p class="h2 mx-1 my-0"><a class="text-white" href="{{ get_base_path() }}/">BRT</a></p>
+				{# PC用ログインとユーザー登録 #}
+				{% if attribute(session, "brt-userId")==NULL %}
+					<p class="mx-1 my-0"><a class="button btn-light px-2 d-none d-sm-block" href="{{ get_base_path() }}/entry" role="button">ユーザー登録</a></p>
+					<p class="mx-1 my-0"><a class="button btn-light px-2 d-none d-sm-block" href="{{ get_base_path() }}/login" role="button">ログイン</a></p>
+				{% else %}
+					<p class="mx-1 my-0"><a class="button btn-light px-2 d-none d-sm-block" href="{{ get_base_path() }}/logout" role="button">ログアウト</a></p>
+				{% endif %}
 			</div>
 		</nav>
 	</div>

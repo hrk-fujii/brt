@@ -32,11 +32,11 @@ $container['view'] = function ($c) {
     $view->addExtension(new \Slim\Views\TwigExtension($router, $uri));
     $view->addExtension(new Twig_Extension_Debug());
     $view->getEnvironment()->addGlobal('session', $_SESSION);
-	$view->offsetSet("title", "default");
-	$view->offsetSet("description", "");
-	$view->offsetSet("page_type", "article");
-	$view->offsetSet("page_keywords", []);
-	twigExtention\registerTwigExtention($view);
+    $view->offsetSet("title", "default");
+    $view->offsetSet("description", "");
+    $view->offsetSet("page_type", "article");
+    $view->offsetSet("page_keywords", []);
+    twigExtention\registerTwigExtention($view);
     return $view;
 };
 
