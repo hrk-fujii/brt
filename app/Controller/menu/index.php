@@ -38,7 +38,7 @@ function showMenuCtrl($response, $view, $db, $saleDate=NULL){
     foreach ($data["bentoArray"] as &$b){
         $b["startSaleStr"] = date("H:i", $b["start_sale_at"]);
         $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);
-        if (b["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED){
+        if ($b["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED){
             $b["orderDeadlineStr"] = NULL; // 予約できない
         } else{
             $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);

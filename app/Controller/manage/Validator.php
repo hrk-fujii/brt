@@ -2,7 +2,7 @@
 
 function setSessionFromEditMenu($input, $targetId=NULL){
     $message = "";
-    $startSaleAt = $input["startSaleDate"] + $input["startSaleHour"] * 60 * 60 + $data["startSaleMinute"] * 60;
+    $startSaleAt = $input["startSaleDate"] + $input["startSaleHour"] * 60 * 60 + $input["startSaleMinute"] * 60;
     if ($startSaleAt <= time()){
         $message = $message. "・販売開始日時は、過去の日時を指定できません。\n";
     }

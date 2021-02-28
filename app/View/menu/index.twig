@@ -53,14 +53,14 @@
                     </div>
                     <div class="col-12 col-sm-4 px-1 py-1">
                         <p>{{ b.startSaleStr }}から{{ b.saleLengthMinuteOnly }}分間販売</p>
-                        {% if orderDeadlineStr==NULL %}
+                        {% if b.orderDeadlineStr==NULL %}
                             <p>予約できません</p>
                         {% else %}
                             <p>{{ b.orderDeadlineStr }}予約締切</p>
                         {% endif %}
                     </div>
                 </div>
-                {% if orderDeadlineStr!=NULL %}
+                {% if b.orderDeadlineStr!=NULL %}
                     <div class="row">
                         {% if attribute(session, "brt-userId")==NULL %}
                             <div class="col-12 text-right"><p>予約には、ログインが必要です。</p></div>
