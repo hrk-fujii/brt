@@ -25,6 +25,9 @@ $app->post('/menu', function (Request $request, Response $response) {
 });
 
 function showMenuCtrl($response, $view, $db, $saleDate=NULL){
+    // 多重予約ロックを解除
+    $_SESSION["brt-orderReady"] = TRUE;
+    
     if ($saleDate===NULL){ // 何もなければ今日の日付
         $saleDate = strtotime(date("Y-m-d", time()));
     }
@@ -35,7 +38,11 @@ function showMenuCtrl($response, $view, $db, $saleDate=NULL){
     foreach ($data["bentoArray"] as &$b){
         $b["startSaleStr"] = date("H:i", $b["start_sale_at"]);
         $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);
-        $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);
+        if (b["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED){
+            $b["orderDeadlineStr"] = NULL; // 予約できない
+        } else{
+            $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);
+        }
     }
     $data["saleDateArray"] = [];
     for ($count = 0; $count <= 10; $count++){

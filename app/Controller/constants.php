@@ -4,6 +4,9 @@
 const USER_TYPE_ADMIN = 2;
 const USER_TYPE_GENERAL = 1;
 
+// DBフラグ
+const BENTO_ORDER_CLOSED = 1;
+
 # 日本語の曜日
 const DAY_JP = ["日", "月", "火", "水", "木", "金", "土"];
 

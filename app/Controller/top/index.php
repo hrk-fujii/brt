@@ -10,6 +10,9 @@ use Model\Dao\Bento;
 
 // トップページ表示
 $app->get('/', function (Request $request, Response $response) {
+    // 多重予約ロックを解除
+    $_SESSION["brt-orderReady"] = TRUE;
+    
     $bentoTable = new Bento($this->db);
     // 日付の設定。今日販売の弁当がなければ最短販売日の弁当
     $saleDate = strtotime(date("Y-m-d", time()));
@@ -36,7 +39,11 @@ $app->get('/', function (Request $request, Response $response) {
     foreach ($data["bentoArray"] as &$b){
         $b["startSaleStr"] = date("H:i", $b["start_sale_at"]);
         $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);
-        $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);
+        if (b["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED){
+            $b["orderDeadlineStr"] = NULL; // 予約できない
+        } else{
+            $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);
+        }
     }
     $data["saleDateArray"] = [];
     for ($count = 0; $count <= 10; $count++){
