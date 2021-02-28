@@ -29,8 +29,8 @@ $app->post("/login", function (request $request, response $response){
     
     // ログインを試行
     // エラーがあれば再入力、なけばログイン
-    if (!loginFromInput($inputData["userName"], $inputData["password"], $this->db)){
-        return showLoginForm($this->view, $response, $inputData, "ユーザー名、またはパスワードが謝っています。");
+    if (!loginFromInput($inputData["mail"], $inputData["password"], $this->db)){
+        return showLoginForm($this->view, $response, $inputData, "メールアドレス、またはパスワードが謝っています。");
     }
     
     // ログインが完了したらリダイレクト

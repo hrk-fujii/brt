@@ -1,5 +1,5 @@
 {% set page_title = "ログイン" %}
-{% set page_description = "LAMP Controllerのログインページです。" %}
+{% set page_description = "BRT ログインページ。" %}
 
 {#レイアウト継承#}
 {% extends "layout/layout.twig" %}
@@ -11,24 +11,27 @@
 {# ページ本文 #}
 {% block page_content %}
 
-    <div class="jumbotron text-center">
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>ログイン</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
         <h2>ログイン</h2>
     </div>
 
     <div class="h3 text-center">
-        <h3>ユーザー名とパスワードを入力し、ログインボタンを押してください。</h3>
+        <h3>メールアドレスとパスワードを入力し、ログインボタンを押してください。</h3>
     </div>
     
-    {% if errorMessage!=null and errorMessage!="" %}
-        <div class="alert-danger p-3">{{ errorMessage | nl2br}}</div>
+    {% if message!=null and message!="" %}
+        <div class="alert-danger p-3">{{ message | nl2br}}</div>
 	{% endif %}
 
 
     <form method="post" autocomplete="off">
         <div class="container py-5">
             <div class="row mb-3">
-                <label class="col-3" for="form_userName"> ユーザー名</label>
-                <input class ="col-9" id="form_userName" type="text" name="userName" required autofocus>
+                <label class="col-3" for="form_mail">メールアドレス</label>
+                <input class ="col-9" id="form_mail" type="text" name="mail" required autofocus>
             </div>
             <div class="row mb-3">
                 <label class="col-3" for="form_password">パスワード</label>

@@ -39,18 +39,24 @@
                     </div>
                     <div class="col-12 col-sm-4 px-1 py-1">
                         <p>{{ b.startSaleStr }}から{{ b.saleLengthMinuteOnly }}分間販売</p>
-                        <p>{{ b.orderDeadlineStr }}予約締切</p>
+                        {% if orderDeadlineStr==NULL %}
+                            <p>予約できません</p>
+                        {% else %}
+                            <p>{{ b.orderDeadlineStr }}予約締切</p>
+                        {% endif %}
                     </div>
                 </div>
-                <div class="row">
-                    {% if attribute(session, "brt-userId")==NULL %}
-                        <div class="col-12 text-right"><p>予約には、ログインが必要です。</p></div>
-                    {% else %}
-                        <div class="col-4 col-sm-3 col-md-2 offset-sm-3 offset-md-6 text-right px-0"><label><input type="checkbox" name="unlock" value="yes">予約確認</label></div>
-                        <div class="col-4 col-sm-3 col-md-2 text-right px-0"><input type="number" min="1" max="99" step="1" name="quantity" value="1">個</div>
-                        <div class="col-4 col-sm-3 col-md-2 text-right px-0"><button type="submit" name="orderTarget" value="{{ b.id }}" class="button btn-success text-white px-3 py-1">予約</div></div>
-                    {% endif %}
-                </div>
+                {% if orderDeadlineStr!=NULL %}
+                    <div class="row">
+                        {% if attribute(session, "brt-userId")==NULL %}
+                            <div class="col-12 text-right"><p>予約には、ログインが必要です。</p></div>
+                        {% else %}
+                            <div class="col-4 col-sm-3 col-md-2 offset-sm-3 offset-md-6 text-right px-0"><label><input type="checkbox" name="unlock" value="yes">予約確認</label></div>
+                            <div class="col-4 col-sm-3 col-md-2 text-right px-0"><input type="number" min="1" max="99" step="1" name="quantity" value="1">個</div>
+                            <div class="col-4 col-sm-3 col-md-2 text-right px-0"><button type="submit" name="orderTarget" value="{{ b.id }}" class="button btn-success text-white px-3 py-1">予約</div></div>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </form>
         </div>
     {% endfor %}
