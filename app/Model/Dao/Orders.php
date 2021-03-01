@@ -14,6 +14,13 @@ class Orders extends Dao{
         ]);
     }
 
+    // IDから削除
+    function deleteFromId($id){
+        return $this->delete([
+            "id"=> $id
+        ]);
+    }
+
     // 追加
     function insertItem($bentoId, $quantity, $userId){
         return $this->insert([

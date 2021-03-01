@@ -38,7 +38,7 @@ function orderProcessCtrl($response, $view, $db, $input){
     }
     
     // 締切確認
-    if (((int)$bentoData["id"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED) || ($bentoData["order_deadline_at"] < time())){
+    if (((int)$bentoData["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED) || ($bentoData["order_deadline_at"] <= time())){
         return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], "この弁当は、すでに予約が締め切られています。在庫状況等につきましては、店頭にてご確認ください。");
     }
 

@@ -1,0 +1,73 @@
+{% set page_title = "予約管理" %}
+{% set page_description = "BRT - 弁当予約の管理ページ。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>予約管理</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>予約管理</h2>
+    </div>
+
+    <p>予約した弁当の表示と、締め切り前の予約の取り消しができます。</p>
+    
+    <h3 class="mt-4 px-3">予約一覧</h3>
+    <div class="container my-3">
+        <div class="row my-3">
+            <div class="container col-12"><form method="post" autocomplete="off">
+                <div class="row my-2">
+                    <div class="col-12">
+                        <label class="mx-1 my-auto">表示する受け取り月<select class="mx-1 my-auto" name="showTargetMonth" required>
+                            {% for d in showTargetMonthArray %}
+                                {% if d.unix==showTargetMonth %}
+                                    <option value="{{ d.unix }}" selected>{{ d.str }}</option>
+                                {% else %}
+                                    <option value="{{ d.unix }}">{{ d.str }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select></label>
+                        <input type="submit" class="button btn-success text-white mx-1" name="submit" value="表示">
+                    </div>
+                </div>
+            </form></div>
+        </div>
+
+    </div>
+    {% for b in bentoArray %}
+        <div class="container my-3">
+            <form method="post" action="{{ get_base_path() }}/mypage/menu/edit" autocomplete="off"><div class="row">
+                <div class="col-12 bg-dark text-white px-2 py-1">
+                    <h4 class="px-0 py-0 my-0">{{ b.name }}</h4>
+                </div>
+                <div class="col-8 px-1 py-1">
+                    <p>{{ b.startSaleStr }}から{{ b.saleLengthMinuteOnly }}分間</p>
+                    <p>予約の受け取りは{{ b.takeDeadlineStr }}まで</p>
+                </div>
+                <div class="col-4 px-1 py-1">
+                    <p>数量　{{ b.quantity }}個</p>
+                    <p>計　{{ price }}円</p>
+                </div>
+                {% if b.orderDeadlineStr!=NULL %}
+                    <div class="col-12 text-right">
+                        <label class="mx-1"><input type="checkbox" name="unlock" value="yes">取り消し確認</label>
+                        <button type="submit" class="button btn-success text-white" name="deleteTarget" value="{{ b.id }}">取消</button>
+                    </div>
+                {% endif %}
+            </div></form>
+        </div>
+    {% endfor %}
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

@@ -11,8 +11,13 @@ use Model\Dao\Bento;
 
 // メニュー表示その他
 $app->get('/mypage', function (Request $request, Response $response) {
-    // 受け取り前のリストを作成
     $data = [];
+    $userTable = new Users($this->db);
+    $userData = $userTable->selectFromId($_SESSION["brt-userId"]);
+    $data["firstName"] = $userData["first_name"];
+    $data["lastName"] = $userData["last_name"];
+    
+    // 受け取り前のリストを作成
     $orderArray = OrderUtil::getBentoFromTime(time(), time() + 3600 * 24 * 360);
 
     foreach ($orderArray as &$b){
