@@ -35,6 +35,7 @@ function showMenuCtrl($response, $view, $db, $saleDate=NULL){
     $bentoTable = new Bento($db);
     $data["bentoArray"] = $bentoTable->selectFromStartSaleAt($saleDate, $saleDate + 60 * 60 * 24 - 1);
     $data["saleDateArray"] = [];
+    $data["showSaleDate"] = $saleDate;
     foreach ($data["bentoArray"] as &$b){
         $b["startSaleStr"] = date("H:i", $b["start_sale_at"]);
         $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);

@@ -22,12 +22,12 @@
     
     <div class="container my-3">
         <div class="row my-3">
-            <div class="container col-12 col-sm-10 order-sm-1"><form method="post" autocomplete="off">
+            <div class="container"><form method="post" autocomplete="off">
                 <div class="row my-2">
                     <div class="col-12">
                         <label class="mx-1 my-auto">表示する販売日<select class="mx-1 my-auto" name="showSaleDate" required>
                             {% for d in saleDateArray %}
-                                {% if d.unix==saleDate %}
+                                {% if d.unix==showSaleDate %}
                                     <option value="{{ d.unix }}" selected>{{ d.str }}</option>
                                 {% else %}
                                     <option value="{{ d.unix }}">{{ d.str }}</option>
@@ -52,6 +52,7 @@
                         <p>{{ b.discription|nl2br }}</p>
                     </div>
                     <div class="col-12 col-sm-4 px-1 py-1">
+                        <p>{{ b.price }}円</p>
                         <p>{{ b.startSaleStr }}から{{ b.saleLengthMinuteOnly }}分間販売</p>
                         {% if b.orderDeadlineStr==NULL %}
                             <p>予約できません</p>
@@ -74,6 +75,9 @@
             </form>
         </div>
     {% endfor %}
+    {% if bentoArray==NULL %}
+        <p class="my-3">表示できるメニューがありません</p>
+    {% endif %}
 
 {% endblock %}
 

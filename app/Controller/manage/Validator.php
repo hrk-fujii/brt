@@ -29,6 +29,9 @@ function setSessionFromEditMenu($input, $targetId=NULL){
         } elseif (mb_strlen($input["name"][$k], "utf-8") > 60){
             $message = $message. "・メニューには、最大60文字までです。\n";
             return substr($message, 0, -1);
+        } elseif ((!is_numeric($input["price"][$k]) || ($input["price"][$k]<0) || ($input["price"][$k]>6000) || ((int)$input["price"][$k]-$input["price"][$k]!=0)) && $input["price"][$k]!=""){
+            $message = $message. "・弁当の価格は、0円から6000円の間で指定してください。\n";
+            return substr($message, 0, -1);
         } elseif (isset($input["name"][$k]) && $input["name"][$k]!==""){
             $isArray = TRUE;
         }

@@ -110,6 +110,7 @@ function showMyMenuManage($response, $view, $db, $input=NULL){
         } else{
             $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);
         }
+        $b["totalPrice"] = $b["price"] * $b["quantity"];
     }
     $data["bentoArray"] = $orderArray;
 

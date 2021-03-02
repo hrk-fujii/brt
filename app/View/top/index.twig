@@ -38,6 +38,7 @@
                         <p>{{ b.discription|nl2br }}</p>
                     </div>
                     <div class="col-12 col-sm-4 px-1 py-1">
+                        <p>{{ b.price }}円</p>
                         <p>{{ b.startSaleStr }}から{{ b.saleLengthMinuteOnly }}分間販売</p>
                         {% if b.orderDeadlineStr==NULL %}
                             <p>予約できません</p>

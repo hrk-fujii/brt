@@ -141,6 +141,10 @@
                     <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_discription{{ i }}">説明</label>
                     <div class ="col-12 col-sm-8 col-md-10 my-2"><textarea class="w-100" id="form_discription{{ i }}" rows="5" name="discription[{{ i }}]">{{ attribute(discription, i) }}</textarea></div>
                 </div>
+                <div class="row mb-2">
+                    <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_price{{ i }}">価格</label>
+                    <div class ="col-12 col-sm-8 col-md-10 my-2"><input type="number" class="mx-1" min="0" max="6000" step="1" id="form_price{{ i }}" name="price[{{ i }}]" value="{{ attribute(price, i) }}">円</div>
+                </div>
             </div>
         {% endfor %}
         <div class="text-center mt-3">

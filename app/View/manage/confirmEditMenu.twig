@@ -57,6 +57,10 @@
                     <div class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_discription{{ i }}">内容</div>
                     <div class ="col-12 col-sm-8 col-md-10 my-2">{{ attribute(discription, i)|nl2br }}</div>
                 </div>
+                <div class="row mb-2">
+                    <div class="col-12 col-sm-4 col-md-2 mt-2 mb-1">価格</div>
+                    <div class ="col-12 col-sm-8 col-md-10 my-2">{{ attribute(price, i)|nl2br }}</div>
+                </div>
             </div>
         {% endif %}
     {% endfor %}
