@@ -3,6 +3,7 @@
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Util\MailUtil;
+use Util\MemberUtil;
 use Model\Dao\Users;
 use Model\Dao\Bento;
 
@@ -10,6 +11,17 @@ use Model\Dao\Bento;
 
 // トップページ表示
 $app->get('/', function (Request $request, Response $response) {
+    // ログイン用URL処理
+    $userTable = new Users($this->db);
+    $urlParam = $request->getQueryParams();
+    if (!empty($urlParam["id"])){
+        $userData = $userTable->selectFromParam($urlParam["id"]);
+    }
+    if (!empty($userData)){
+        MemberUtil::login($userData["id"], $userData["mail"]);
+    }
+        
+    
     // 多重予約ロックを解除
     $_SESSION["brt-orderReady"] = TRUE;
     
@@ -39,7 +51,7 @@ $app->get('/', function (Request $request, Response $response) {
     foreach ($data["bentoArray"] as &$b){
         $b["startSaleStr"] = date("H:i", $b["start_sale_at"]);
         $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);
-        if ($b["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED){
+        if (($b["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED) || ($b["order_deadline_at"] <= time())){
             $b["orderDeadlineStr"] = NULL; // 予約できない
         } else{
             $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);

@@ -1,0 +1,42 @@
+{% set page_title = "ログイン用URL管理" %}
+{% set page_description = "BRT - ログイン用URLの管理ページ。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>ログイン用URL管理</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>ログイン用URL管理</h2>
+    </div>
+
+    {% if message!="" %}
+        <div id="messageText"aria-live="assertive" role="alert">
+            <div class="alert-danger p-3">{{ message | nl2br}}</div>
+        </div>
+    {% endif %}
+
+    <p class="my-3">現在のログイン用URLを表示しています。変更するには、「変更」ボタンを選択します。ログイン用URLを変更すると、変更前のURLは使用できなくなります。</p>
+
+    <div class="container my-4">
+        <div class="row">
+            <div class="col-12 col-sm-3"><p>ログイン用URL</p></div>
+            <div class="col-12 col-sm-9"><a href="{{ url }}">{{ url }}</a></div>
+        </div>
+        <form method="post" autocomplete="off"><div class="row">
+            <div class="col-12 text-right"><input class="button btn-success text-white p-1" type="submit" name="changeUrlParam" value="変更"></div>
+        </div></form>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

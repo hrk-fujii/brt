@@ -33,6 +33,16 @@ class Users extends Dao{
         ]);
     }
 
+    // ログイン用URL更新
+    function updateUrlParamFromId($id, $param){
+        return $this->update([
+            "id"=> $id,
+            "url_param"=> $param,
+            "last_updated_at"=> time(),
+            "last_logdin_at"=> time()
+        ]);
+    }
+
     // ログイン日時更新
     function loginFromId($id){
         return $this->update([
@@ -45,6 +55,13 @@ class Users extends Dao{
     function selectFromId($id){
         return $this->select([
             "id"=> ["=", $id]
+        ]);
+    }
+
+    // URLから取得
+    function selectFromParam($param){
+        return $this->select([
+            "url_param"=> $param
         ]);
     }
 
