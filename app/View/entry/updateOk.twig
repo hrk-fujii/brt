@@ -25,16 +25,16 @@
 
     <div class="container py-5">
         <div class="row mb-3">
-            <label class="col-3">メールアドレス</label>
-            <label class="col-9">{{ mail }}</label>
+            <div class="col-3">メールアドレス</div>
+            <div class="col-9">{{ mail }}</div>
         </div>
         <div class="row mb-3">
-            <label class="col-3">氏名</label>
-            <label class="col-9">{{ lastName }}　{{ firstName }}</label>
+            <div class="col-3">氏名</div>
+            <div class="col-9">{{ lastName }}　{{ firstName }}</div>
         </div>
         <div class="row mb-3">
-            <label class="col-3">ログイン用URL</label>
-            <label class="col-9"> {{ url }}</label>
+            <div class="col-3">ログイン用URL</div>
+            <label class="col-9"><a href="{{ url }}</a>">{{ url }}</a></div>
         </div>
     </div>
 

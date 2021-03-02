@@ -13,6 +13,7 @@ class MemberUtil{
 			$_SESSION["brt-userId"] = $id;
 			$_SESSION["brt-userMail"] = $mail;
 			$_SESSION["brt-userType"] = $userData["type"];
+			$_SESSION["brt-lastLogdinAt"] = $userData["last_logdin_at"];
 			$userTable->loginFromId($id);
 			return TRUE;
 		} else{
