@@ -1,6 +1,7 @@
 <?php
 
 use Util\ViewUtil;
+use Model\Dao\Users;
 
 // Application middleware
 // e.g: $app->add(new \Slim\Csrf\Guard);
@@ -39,9 +40,22 @@ class AccessHandler{
 
 	// アクセス制御
 	public function __invoke($request, $response, $next){
+		$userTable = new Users($this->container->get("db"));
 		$path = explode("/",$request->getUri()->getPath());
 		
-		// 管理画面はadminのみ
+		// パスワード変更とかがあったらログアウト
+		if (!empty($_SESSION["brt-userId"])){
+			$userData = $userTable->selectFromId($_SESSION["brt-userId"]);
+		}
+		if (empty($_SESSION["brt-lastLogdinAt"]) || $userData["last_updated_at"] > $_SESSION["brt-lastLogdinAt"]){
+			$_SESSION = [];
+		}
+
+		// 会員向けにはログイン必須
+		if (!empty($path[1]) && ($path[1]==="mypage" || $path[1]==="order") && empty($_SESSION["brt-userId"])){
+			return ViewUtil::error($response, $this->container->get("view"), "このページにアクセスするには、ログインしてください。");
+		}
+		
 		if (!empty($path[1]) && $path[1]==="manage" && (int)$_SESSION["brt-userType"]!==USER_TYPE_ADMIN){
 			return ViewUtil::error($response, $this->container->get("view"), "このページにアクセスするには、管理者ユーザーでログインしてください。");
 		}

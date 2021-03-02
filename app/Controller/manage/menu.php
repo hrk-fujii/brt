@@ -108,7 +108,7 @@ function writeMenuCtrl($response, $view, $db){
     $data = $_SESSION["brt-confirmEditMenu"];
     foreach ($data["name"] as $k=> $v){
         if (!empty($data["name"][$k])){
-            $ret = $bentoTable->insertItem($data["name"][$k], $data["discription"][$k], $data["orderDeadlineAt"], $data["startSaleAt"], $data["endSaleAt"], NULL);
+            $ret = $bentoTable->insertItem($data["name"][$k], $data["discription"][$k], $data["price"][$k], $data["orderDeadlineAt"], $data["startSaleAt"], $data["endSaleAt"], NULL);
         }
     }
     
@@ -125,6 +125,7 @@ function menuManageCtrl($response, $view, $db, $saleDate=NULL){
     $bentoTable = new Bento($db);
     $data["bentoArray"] = $bentoTable->selectFromStartSaleAt($saleDate, $saleDate + 60 * 60 * 24 - 1);
     $data["saleDateArray"] = [];
+    $data["showSaleDate"] = $saleDate;
     foreach ($data["bentoArray"] as &$b){
         $b["startSaleStr"] = date("n/j H:i", $b["start_sale_at"]);
         $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);

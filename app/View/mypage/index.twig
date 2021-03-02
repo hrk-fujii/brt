@@ -1,0 +1,56 @@
+{% set page_title = "マイページ" %}
+{% set page_description = "BRT - ユーザーのマイページ。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>マイページ</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>マイページ</h2>
+    </div>
+
+    <p>{{ hello }}。{{ lastName }} {{ firstName }}さん。このページでは、弁当予約の状況確認と、ユーザー情報の管理ができます。</p>
+    
+    <h3 class="mt-4 px-3">受け取り予定の予約</h3>
+    {% for b in bentoArray %}
+        <div class="container my-3">
+            <form method="post" action="{{ get_base_path() }}/order" autocomplete="off">
+                <div class="row">
+                    <div class="col-12 bg-dark text-white px-2 py-1">
+                        <h4 class="px-0 py-0 my-0">{{ b.name }}</h4>
+                    </div>
+                    <div class="col-8 px-1 py-1">
+                        <p>{{ b.startSaleStr }}から{{ b.saleLengthMinuteOnly }}分間</p>
+                        <p>予約の受け取りは{{ b.takeDeadlineStr }}まで</p>
+                    </div>
+                    <div class="col-4 px-1 py-1">
+                        <p>数量　{{ b.quantity }}個</p>
+                        <p>計　{{ b.totalPrice }}円</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% endfor %}
+
+    <h3 class="mt-4 px-3">管理・設定</h3>
+    <div class="container"><div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 px-1 py-1 text-center"><a class="button btn-primary text-white px-auto py-2 w-100 d-block" href="{{ get_base_path() }}/mypage/menu">予約履歴（確認・取り消し）</a></div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 px-1 py-1 text-center"><a class="button btn-primary text-white px-auto py-2 w-100 d-block" href="{{ get_base_path() }}/entry">パスワード変更・ユーザー登録</a></div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 px-1 py-1 text-center"><a class="button btn-primary text-white px-auto py-2 w-100 d-block" href="{{ get_base_path() }}/mypage/url">ログイン用URLの確認・変更</a></div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 px-1 py-1 text-center"><a class="button btn-primary text-white px-auto py-2 w-100 d-block" href="{{ get_base_path() }}/mypage/unregister">BRTから退会</a></div>
+    </div></div>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

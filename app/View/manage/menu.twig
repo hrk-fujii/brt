@@ -42,7 +42,7 @@
                     <div class="col-12">
                         <label class="mx-1 my-auto">表示する販売日<select class="mx-1 my-auto" name="showSaleDate" required>
                             {% for d in saleDateArray %}
-                                {% if d.unix==saleDate %}
+                                {% if d.unix==showSaleDate %}
                                     <option value="{{ d.unix }}" selected>{{ d.str }}</option>
                                 {% else %}
                                     <option value="{{ d.unix }}">{{ d.str }}</option>
@@ -67,6 +67,7 @@
                         <p>{{ b.discription|nl2br }}</p>
                     </div>
                     <div class="col-12 col-sm-4 px-1 py-1">
+                        <p>{{ b.price }}円</p>
                         <p>{{ b.startSaleStr }}から<br>{{ b.saleLengthMinuteOnly }}分間販売</p>
                         <p>{{ b.orderDeadlineStr }}注文締切</p>
                     </div>
