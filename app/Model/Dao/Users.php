@@ -71,4 +71,11 @@ class Users extends Dao{
             "mail"=> $mail
         ]);
     }
+
+    // ユーザータイプから抽出
+    function selectFromType($type){
+        return $this->select([
+            "type"=> $type
+        ], $sort = "id", $order = "ASC", $limit = 2100000000, $fetch_all = TRUE);
+    }
 }

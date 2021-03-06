@@ -48,7 +48,11 @@ class AccessHandler{
 			$userData = $userTable->selectFromId($_SESSION["brt-userId"]);
 		}
 		if (empty($_SESSION["brt-lastLogdinAt"]) || $userData["last_updated_at"] > $_SESSION["brt-lastLogdinAt"]){
-			$_SESSION = [];
+			if (!empty($_SESSION["brt-confirmMail"])){ // 確認メールアドレスは例外
+				$_SESSION = ["brt-confirmMail"=> $_SESSION["brt-confirmMail"]];
+			} else{
+				$_SESSION = [];
+			}
 		}
 
 		// 会員向けにはログイン必須
@@ -59,6 +63,12 @@ class AccessHandler{
 		if (!empty($path[1]) && $path[1]==="manage" && (int)$_SESSION["brt-userType"]!==USER_TYPE_ADMIN){
 			return ViewUtil::error($response, $this->container->get("view"), "このページにアクセスするには、管理者ユーザーでログインしてください。");
 		}
+
+		// internalApi
+		if (!empty($path[1]) && $path[1]==="internalapi" && strpos($request->getHeaderLine("host"), "localhost")===FALSE){
+			return ViewUtil::error($response, $this->container->get("view"), "この場所にアクセスする権限がありません。");
+		}
+
 		return $next($request, $response);
 	}
 }

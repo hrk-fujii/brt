@@ -68,7 +68,7 @@ $app->post('/entry', function (Request $request, Response $response) {
                 $message = $message. $studentNoValidate;
             }
             $message = $message. ValidationUtil::checkString("userPassword", $input["password"], "・", "\n");
-            if (!empty($userTable->selectFromName($input["name"]))){
+            if (!empty($userTable->selectFromMail($input["mail"]))){
                 $message = $message. "・このユーザー名は、すでに使用されています。\n";
             }
             if ($input["password"]!==$input["confirmPassword"]){
