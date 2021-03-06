@@ -1,0 +1,35 @@
+{% set page_title = "パスワード変更完了" %}
+{% set page_description = "BRT - ログインパスワードの変更完了通知。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>パスワード変更完了</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>パスワード変更完了</h2>
+    </div>
+
+    <div id="messageText"aria-live="assertive" role="alert">
+        <div class="p-3">パスワードを変更しました。これに伴い、ログイン用URLも変更されました。新しいログイン用URLは以下の通りです。</div>
+    </div>
+
+    <div class="container my-4">
+        <div class="row">
+            <div class="col-12 col-sm-3"><p>ログイン用URL</p></div>
+            <div class="col-12 col-sm-9"><a href="{{ url }}">{{ url }}</a></div>
+        </div>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}
