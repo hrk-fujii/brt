@@ -63,6 +63,12 @@ class AccessHandler{
 		if (!empty($path[1]) && $path[1]==="manage" && (int)$_SESSION["brt-userType"]!==USER_TYPE_ADMIN){
 			return ViewUtil::error($response, $this->container->get("view"), "このページにアクセスするには、管理者ユーザーでログインしてください。");
 		}
+
+		// internalApi
+		if (!empty($path[1]) && $path[1]==="internalapi" && strpos($request->getHeaderLine("host"), "localhost")===FALSE){
+			return ViewUtil::error($response, $this->container->get("view"), "この場所にアクセスする権限がありません。");
+		}
+
 		return $next($request, $response);
 	}
 }
