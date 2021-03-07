@@ -166,6 +166,5 @@ function deleteMenuCtrl($response, $view, $db, $deleteTarget){
         "\n\n\nご不便をおかけいたします。\n\nBRT運営チーム";
     MailUtil::sends("弁当の受け取り予定が取り消されました", $body, "no-reply", array_unique($mailArray));
 
-
     return menuManageCtrl($response, $view, $db, $date);
 }

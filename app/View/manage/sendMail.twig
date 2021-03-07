@@ -1,0 +1,56 @@
+{% set page_title = "一斉メール送信" %}
+{% set page_description = "BRT - 会員への一斉メール送信フォーム。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>一斉メール送信</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>一斉メール送信</h2>
+    </div>
+
+
+    <div class="text-center">
+        <h3>全会員宛にメールを送信します。</h3>
+        <p class="text-left">タイトルと本文を入力し、プレビューボタンを押してください。次の画面に入力内容が表示され、同時にメール見本が送信されます。</p>
+        <p class="text-left">1行の文字数が全角30文字(半角70文字)を超える場合は、メールが正常に受信されない場合があります。</p>
+    </div>
+    
+
+    <div id="messageText"aria-live="assertive" role="alert">
+        {% if message!=null and message!="" %}
+            <div class="alert-danger p-3">{{ message | nl2br}}</div>
+	    {% endif %}
+    </div>
+
+    <form method="post" autocomplete="off">
+        <div class="container px-3 py-3">
+            <div class="row mb-1">
+                <label class="col-12 col-sm-4 col-md-2 mt-2 mb-1" for="form_title">タイトル</label>
+                <div class ="col-12 col-sm-8 col-md-10 my-2"><input class="w-100" id="form_title" type="text" name="mailTitle" value="{{ mailTitle }}"></div>
+            </div>
+            <div class="row mb-2">
+                <label class="col-12 mt-2 mb-1" for="form_body">本文</label>
+                <div class ="col-12 my-2"><textarea class="w-100" id="form_body" rows="30" name="mailBody">{{ mailBody }}</textarea></div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-3">
+            <input type="submit" class="btn btn-success" name="goToPreview" value="プレビュー">
+        </div>
+    </form>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

@@ -1,0 +1,48 @@
+{% set page_title = "一斉メールプレビュー" %}
+{% set page_description = "BRT - 会員への一斉メール送信前プレビュー。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>一斉メールプレビュー</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>一斉メールプレビュー</h2>
+    </div>
+
+
+    <div class="text-center">
+        <h3>全会員宛メールの確認です。</h3>
+        <p class="text-left">本画面と同じ内容のメールを、タイトル末尾に"<プレビュー>"を付加して送信しました。誤字脱字、レイアウト等を確認の上、よろしければ送信ボタンを押してください。</p>
+    </div>
+    
+    <form method="post" autocomplete="off">
+        <div class="container px-3 py-3">
+            <div class="row mb-1">
+                <div class="col-12 col-sm-4 col-md-2 mt-2 mb-1">タイトル</div>
+                <div class ="col-12 col-sm-8 col-md-10 my-2">{{ mailTitle }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12 mt-2 mb-1">本文</div>
+                <div class ="col-12 my-2">{{ mailBody|nl2br }}</div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-3">
+            <input type="submit" class="btn btn-success" name="send" value="送信">
+        </div>
+    </form>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

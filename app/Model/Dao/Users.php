@@ -78,4 +78,9 @@ class Users extends Dao{
             "type"=> $type
         ], $sort = "id", $order = "ASC", $limit = 2100000000, $fetch_all = TRUE);
     }
+
+    // ユーザー全件取得
+    function selectAll(){
+        return $this->select([], $sort = "id", $order = "ASC", $limit = 2100000000, $fetch_all = TRUE);
+    }
 }
