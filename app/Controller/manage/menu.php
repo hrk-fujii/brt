@@ -6,6 +6,7 @@ use Util\ValidationUtil;
 use Util\MailUtil;
 use Model\Dao\Users;
 use Model\Dao\Bento;
+use Model\Dao\Orders;
 
 
 
@@ -140,11 +141,31 @@ function menuManageCtrl($response, $view, $db, $saleDate=NULL){
 }
 
 function deleteMenuCtrl($response, $view, $db, $deleteTarget){
+    $userTable = new Users($db);
     $bentoTable = new Bento($db);
-    $time = $bentoTable->selectFromId($deleteTarget)["start_sale_at"];
-    $date = strtotime(date("Y-m-d", $time));
+    $orderTable = new Orders($db);
+    $bentoData = $bentoTable->selectFromId($deleteTarget);
+    $date = strtotime(date("Y-m-d", $bentoData["start_sale_at"]));
+    
+    // 削除前にいったんデータ保持
+    $orderArray = $orderTable->selectFromBentoId($deleteTarget);
     // メニュー削除
     $bentoTable->deleteFromId($deleteTarget);
+
+    if ($bentoData["end_sale_at"] <= time()){ // 受け取り終了後ならここまで
+        return menuManageCtrl($response, $view, $db, $date);
+    }
+
+    // 予約者にはメールで通知
+    $mailArray = [];
+    foreach ($orderArray as $o){
+        array_push($mailArray, $userTable->selectFromId($o["users_id"])["mail"]);
+    }
+    $body = "BRTのご利用、ありがとうございます。メニューの修正に伴い、以下の弁当のご予約がキャンセルされましたので、お知らせいたします。\n\n内容\n・".
+        date("n/j", $bentoData["start_sale_at"]). "(". DAY_JP[date("w", $bentoData["start_sale_at"])]. ") ". date("H:i", $bentoData["start_sale_at"]). " より販売の". $bentoData["name"].
+        "\n\n\nご不便をおかけいたします。\n\nBRT運営チーム";
+    MailUtil::sends("弁当の受け取り予定が取り消されました", $body, "no-reply", array_unique($mailArray));
+
 
     return menuManageCtrl($response, $view, $db, $date);
 }
