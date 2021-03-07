@@ -1,0 +1,34 @@
+{% set page_title = "一斉送信完了" %}
+{% set page_description = "BRT - 全会員宛一斉メールの送信完了通知。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>送信完了</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>送信完了</h2>
+    </div>
+
+
+    <div id="messageText"aria-live="assertive" role="alert">
+        <div class="p-3">全会員にメールを送信しました。</div>
+    </div>
+
+    <div class="my-4 text-center">
+        <a class="button btn-success text-white px-3 py-1" href="{{ get_base_path() }}/manage">サイト管理へ</a>
+    </div>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

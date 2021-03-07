@@ -30,4 +30,11 @@ class Orders extends Dao{
             "ordered_at"=> time()
         ]);
     }
+
+    // 弁当IDから抽出
+    function selectFromBentoId($bentoId){
+        return $this->select([
+            "bento_id"=> $bentoId
+        ], $sort = "id", $order = "ASC", $limit = 2100000000, $fetch_all = TRUE);
+    }
 }
