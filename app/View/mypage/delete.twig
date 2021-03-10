@@ -1,0 +1,57 @@
+{% set page_title = "退会" %}
+{% set page_description = "BRT - 退会フォーム。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>退会</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>退会</h2>
+    </div>
+
+
+    <div>
+        <p>BRTから退会するには、以下の項目を入力してください。「退会確認」にチェックを入れ、「退会」ボタンを押すと、退会が完了します。</p>
+        <p>BRTから退会すると、登録情報を復元することはできません。再度利用される場合は、ユーザー登録が必要になります。なお、ユーザーに関する一部のデータは、最大半年間保持されます。</p>
+    </div>
+    
+
+    <div id="messageText"aria-live="assertive" role="alert">
+        {% if message!=null and message!="" %}
+            <div class="alert-danger p-3">{{ message | nl2br}}</div>
+	    {% endif %}
+    </div>
+
+    <form method="post" autocomplete="off">
+        <div class="container py-3">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_mail"> メールアドレス</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_mail" type="text" name="mail" value="{{ mail }}" required>
+            </div>
+        </div>
+        <div class="container py-3">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_password"> パスワード</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_password" type="password" name="password" required>
+            </div>
+        </div>
+        <div class="text-right">
+            <label class="mx-2"><input type="checkbox" name="confirmDelete" value="yes">退会確認</label>
+            <input type="submit" class="btn btn-success" value="退会">
+        </div>
+    </form>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

@@ -83,4 +83,13 @@ class Users extends Dao{
     function selectAll(){
         return $this->select([], $sort = "id", $order = "ASC", $limit = 2100000000, $fetch_all = TRUE);
     }
+
+    function deleteFromId($id){
+        if (empty($id)){
+            return FALSE;
+        }
+        return $this->delete([
+            "id"=> ["=", $id]
+        ]);
+    }
 }
