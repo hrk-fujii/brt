@@ -20,12 +20,6 @@ $app->get('/mypage/changepassword', function (Request $request, Response $respon
 
 // パスワード変更
 $app->post('/mypage/changepassword', function (Request $request, Response $response) {
-    // パスワード変更のリロード対策
-    if (empty($_SESSION["brt-changePasswordReady"])){
-        return ViewUtil::error($response, $this->view, "無効なアクセスが検出されたため、サービスの継続ができません。恐れ入りますが、トップページに戻り、最初からやり直してください。");
-    }
-    $_SESSION["brt-changePasswordReady"] = FALSE;
-    
     // パスワード変更内容確認へ
     $input = $request->getParsedBody();
 
@@ -43,6 +37,11 @@ $app->post('/mypage/changepassword', function (Request $request, Response $respo
     if (!empty($message)){ // エラーの時
         return $this->view->render($response, 'mypage/changepassword.twig', ["message"=> mb_substr($message, 0, -1)]);
     } else{
+        // パスワード変更のリロード対策
+        if (empty($_SESSION["brt-changePasswordReady"])){
+            return ViewUtil::error($response, $this->view, "無効なアクセスが検出されたため、サービスの継続ができません。恐れ入りますが、トップページに戻り、最初からやり直してください。");
+        }
+        $_SESSION["brt-changePasswordReady"] = FALSE;
         $param = MemberUtil::makeRandomId();
         $userTable = new Users($this->db);
         $userTable->updatePassword_hashFromId($_SESSION["brt-userId"], password_hash($input["password"], PASSWORD_DEFAULT), $param);

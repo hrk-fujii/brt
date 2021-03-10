@@ -48,11 +48,13 @@ class AccessHandler{
 			$userData = $userTable->selectFromId($_SESSION["brt-userId"]);
 		}
 		if (empty($_SESSION["brt-lastLogdinAt"]) || $userData["last_updated_at"] > $_SESSION["brt-lastLogdinAt"]){
+			$sessionData = [];
 			if (!empty($_SESSION["brt-confirmMail"])){ // 確認メールアドレスは例外
-				$_SESSION = ["brt-confirmMail"=> $_SESSION["brt-confirmMail"]];
-			} else{
-				$_SESSION = [];
+				$sessionData["brt-confirmMail"] = $_SESSION["brt-confirmMail"];
+			} elseif (!empty($_SESSION["brt-changePasswordReady"])){
+				$sessionData["brt-changePasswordReady"] = $_SESSION["brt-changePasswordReady"];
 			}
+			$_SESSION = $sessionData;
 		}
 
 		// 会員向けにはログイン必須
