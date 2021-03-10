@@ -94,7 +94,7 @@ function showMyMenuManage($response, $view, $db, $input=NULL){
     }
     
     // 月一覧
-    $monthTmp = strtotime(date("Y-m-1", time()));
+    $monthTmp = strtotime(date("Y-m-1", time() + 11 * 3600 * 24));
     $data["showTargetMonthArray"] = [];
     for ($i=0; $i<=2; $i++){
         array_push($data["showTargetMonthArray"], ["str"=> date("Y年n月", $monthTmp), "unix"=> $monthTmp]);
