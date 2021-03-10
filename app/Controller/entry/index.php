@@ -82,7 +82,11 @@ $app->post('/entry', function (Request $request, Response $response) {
             $userData = $userTable->selectFromMail($input["new-confirmMail"]);
             if (empty($userData)){
                 $param = MemberUtil::makeRandomId();
-                $userId = $userTable->insertUser($input["new-confirmMail"] , $input["lastName"], $input["firstName"], $input["studentNo"], password_hash($input["password"], PASSWORD_DEFAULT), $param, USER_TYPE_GENERAL);
+                if (empty($input["studentNo"])){
+                    $userId = $userTable->insertUser($input["new-confirmMail"] , $input["lastName"], $input["firstName"], NULL, password_hash($input["password"], PASSWORD_DEFAULT), $param, USER_TYPE_GENERAL);
+                } else{
+                    $userId = $userTable->insertUser($input["new-confirmMail"] , $input["lastName"], $input["firstName"], $input["studentNo"], password_hash($input["password"], PASSWORD_DEFAULT), $param, USER_TYPE_GENERAL);
+                }
                 if ($userId!==FALSE){
                     MemberUtil::login($userId, $input["new-confirmMail"]);
                     $data = ["mail"=> $input["new-confirmMail"], "lastName"=> $input["lastName"], "firstName"=> $input["firstName"], "studentNo"=> $input["studentNo"], "url"=> $request->getUri()->getBaseUrl()."/?id=".$param];
