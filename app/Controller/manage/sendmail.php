@@ -55,7 +55,7 @@ function sendMailCtrl($response, $view, $db, $message=""){
 function sendMailPreviewCtrl($response, $view, $db){
     $userTable = new Users($db);
     $userData = $userTable->selectFromId($_SESSION["brt-userId"]);
-    MailUtil::send($_SESSION["brt-confirmSendMail"]["mailTitle"]. "<プレビュー>", $_SESSION["brt-confirmSendMail"]["mailBody"], "no-reply", $userData["mail"]);
+    MailUtil::send($_SESSION["brt-confirmSendMail"]["mailTitle"]. "<プレビュー>", $_SESSION["brt-confirmSendMail"]["mailBody"], "noreply", $userData["mail"]);
     $data = ["mailTitle"=> $_SESSION["brt-confirmSendMail"]["mailTitle"], "mailBody"=> $_SESSION["brt-confirmSendMail"]["mailBody"]];
     return $view->render($response, 'manage/sendMailPreview.twig', $data);
 }
@@ -69,6 +69,6 @@ function sendMailProcess($response, $view, $db){
     foreach ($userData as $u){
         array_push($mailArray, $u["mail"]);
     }
-    MailUtil::sends($_SESSION["brt-confirmSendMail"]["mailTitle"], $_SESSION["brt-confirmSendMail"]["mailBody"], "no-reply", $mailArray);
+    MailUtil::sends($_SESSION["brt-confirmSendMail"]["mailTitle"], $_SESSION["brt-confirmSendMail"]["mailBody"], "noreply", $mailArray);
     return $view->render($response, 'manage/sendMailOk.twig', []);
 }

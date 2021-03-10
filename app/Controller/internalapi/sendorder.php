@@ -32,7 +32,7 @@ $app->get('/internalapi/sendorder', function (Request $request, Response $respon
 
     // メール送信
     foreach ($userTable->selectFromType(USER_TYPE_ADMIN) as $u){
-        $ret = MailUtil::send("予約を回収しました", $text, "no-reply", $u["mail"]);
+        $ret = MailUtil::send("予約を回収しました", $text, "noreply", $u["mail"]);
     }
     echo($ret);
 });

@@ -68,7 +68,7 @@ function deleteOrderProcessCtrl($response, $view, $db, $input){
     $body = $userData['last_name']. " ". $userData['first_name']. "様\nBRTをご利用いただき、ありがとうございます。\n以下の予約を取り消しました。\n\n内容\n".
         "・". $bentoData['name']. "    ". $orderData['quantity']. "個\n\n".
         "なお、予約の締め切り時刻までは、再度予約することもできますので、どうぞご検討ください。\n\nBRT運営チーム";
-    MailUtil::send("弁当の予約を取り消しました", $body, "no-reply", $userData["mail"]);
+    MailUtil::send("弁当の予約を取り消しました", $body, "noreply", $userData["mail"]);
     return deleteOrderMessageCtrl($response, $view, $bentoData["end_sale_at"], $bentoData['name']. "、". $orderData['quantity']. "個の予約を取り消しました。予約の締め切り時刻までは、再度予約することも可能ですので、どうぞご検討ください。");
 }
 

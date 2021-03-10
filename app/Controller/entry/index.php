@@ -150,7 +150,7 @@ function sendConfirmMailCtrl($request, $response, $view, $mail){
         $request->getUri()->getBaseUrl(). "/entry?session=". $param.
         "\n\nBRT運営チーム";
     
-    MailUtil::send($title, $text, "no-reply", $mail);
+    MailUtil::send($title, $text, "noreply", $mail);
         return $view->render($response, 'entry/send.twig', $data);
 }
 

@@ -57,7 +57,7 @@ function orderProcessCtrl($response, $view, $db, $input){
         $body = $userData['last_name']. " ". $userData['first_name']. "様\nBRTをご利用いただき、ありがとうございます。\n以下の内容で予約を受け付けました。結果につきましては、予約締め切り後にお知らせいたします。\n\n内容\n".
             "・". $bentoData['name']. "    ". $input['quantity']. "個\n\n".
             "なお、予約の締め切り時刻までは、マイページから予約を取り消すことができます。\n\nBRT運営チーム";
-        MailUtil::send("弁当を予約しました", $body, "no-reply", $userData["mail"]);
+        MailUtil::send("弁当を予約しました", $body, "noreply", $userData["mail"]);
         return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], $bentoData['name']. "、". $input['quantity']. "個の予約を受け付けました。予約の締め切り時刻までは、マイページから取り消しができます。");
     }
 
