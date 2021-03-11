@@ -41,6 +41,10 @@
         </div>
     {% endfor %}
 
+    {% if bentoArray==NULL %}
+        <h4 class="my-3">表示できる予約がありません</h4>
+    {% endif %}
+
     <h3 class="mt-4 px-3">管理・設定</h3>
     <div class="container"><div class="row">
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 px-1 py-1 text-center"><a class="button btn-primary text-white px-auto py-2 w-100 d-block" href="{{ get_base_path() }}/mypage/menu">予約履歴（確認・取り消し）</a></div>
