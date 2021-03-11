@@ -21,6 +21,9 @@ function setSessionFromEditMenu($input, $targetId=NULL){
         $message = $message. "・販売期間の設定が不正です。\n";
     }
     $input["endSaleAt"] = $startSaleAt + $input["saleLengthHour"] * 60 * 60 + $input["saleLengthMinute"] * 60;
+    if (date("d", $input["endSaleAt"])!==date("d", $startSaleAt)){
+        $message = $message. "・日付をまたいだ販売期間の登録はできません。\n";
+    }
     $isArray = FALSE;
     foreach ($input["name"] as $k=> $v){
         if ($input["name"][$k]==="" && (isset($input["discription"][$k]) && $input["discription"][$k]!=="")){
@@ -35,6 +38,7 @@ function setSessionFromEditMenu($input, $targetId=NULL){
         } elseif (isset($input["name"][$k]) && $input["name"][$k]!==""){
             $isArray = TRUE;
         }
+        $input["price"][$k] = (int)$input["price"][$k];
     }
     if (!$isArray){
         $message = $message. "・メニューを設定してください。\n";
