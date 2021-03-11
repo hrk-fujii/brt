@@ -32,7 +32,10 @@ $app->get('/', function (Request $request, Response $response) {
     $data["day"] = NULL;
     for ($i=0; $i<=9; $i++){
         if ($i===0){
-            $bentoArray = $bentoTable->selectFromEndSaleAt($saleDate, time());
+            $bentoArray = $bentoTable->selectFromStartSaleAt($saleDate, $saleDate + 60 * 60 * 24 - 1);
+            if (empty($bentoTable->selectFromEndSaleAt(time(), $saleDate + 60 * 60 * 24 - 1))){
+                $bentoArray = NULL;
+            }
         } else{
             $bentoArray = $bentoTable->selectFromStartSaleAt($saleDate, $saleDate + 60 * 60 * 24 - 1);
         }
