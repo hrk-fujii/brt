@@ -31,7 +31,11 @@ $app->get('/', function (Request $request, Response $response) {
     $bentoArray = NULL;
     $data["day"] = NULL;
     for ($i=0; $i<=9; $i++){
-        $bentoArray = $bentoTable->selectFromStartSaleAt($saleDate, $saleDate + 60 * 60 * 24 - 1);
+        if ($i===0){
+            $bentoArray = $bentoTable->selectFromEndSaleAt($saleDate, time());
+        } else{
+            $bentoArray = $bentoTable->selectFromStartSaleAt($saleDate, $saleDate + 60 * 60 * 24 - 1);
+        }
         if (!empty($bentoArray) && count($bentoArray)!=0){
             if ($i===0){
                 $data["day"] = "本日";

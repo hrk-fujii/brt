@@ -47,6 +47,13 @@ class Bento extends Dao{
         ], $sort = "id", $order = "ASC", $limit = 50, $fetch_all = TRUE);
     }
 
+    // 販売終了日時指定抽出
+    function selectFromEndSaleAt($start, $end){
+        return $this->select([
+            "end_sale_at"=> [$start, $end]
+        ], $sort = "id", $order = "ASC", $limit = 50, $fetch_all = TRUE);
+    }
+
     // IDから削除
     function deleteFromId($id){
         return $this->delete(["id"=> $id]);
