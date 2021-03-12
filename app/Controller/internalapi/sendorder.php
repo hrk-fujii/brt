@@ -13,22 +13,23 @@ $app->get('/internalapi/sendorder', function (Request $request, Response $respon
     if (empty($ret)){
         return FALSE;
     }
-    // ログを記録
-    $idArray = [];
-    foreach ($ret as $o){
-        array_push($idArray, orderUtil::addHistory($o["student_no"], $o["first_name"], $o["last_name"], $o["name"], $o["quantity"], $o["order_deadline_at"], $o["start_sale_at"]));
-    }
 
     // 本文のリスト部分作成
     $orderStr = "";
     $orderHistoryTable = new Order_history($this->db);
-    foreach ($idArray as $i){
-        $ret = $orderHistoryTable->selectFromId($i);
-        $orderStr = $orderStr. "No".$ret["id"]. "  ". $ret["last_name"]. " ". $ret["first_name"]. "\n・". $ret["bento_name"]. " (". $ret["order_deadline_at"]. "締切) ". $ret["quantity"]. "個\n\n";
+    foreach ($ret as $b){
+        $orderStr = $orderStr. "<". $b["name"]. "  計". $b["quantity"]. "個>\n(". $b["orderDeadlineAtStr"]. "締切分) \n";
+        foreach ($b["order"] as $o){
+            $orderStr = $orderStr. "・". $o["name"]. " ". $o["studentNo"]. ": ". $o["quantity"]. "個\n";
+        }
+        $orderStr = $orderStr. "\n";
     }
 
+    // ログを記録
+    $orderNo = orderUtil::addHistory($orderStr);
+
     // メール本文
-    $text = "BRT管理者様\n\n以下の予約を回収いたしましたので、お知らせいたします。担当者は内容をご確認の上、処理願います。\n\n----内容----\n\n". $orderStr. "BRT自動配信システム";
+    $text = "BRT管理者様\n\n以下の予約を回収いたしましたので、お知らせいたします。担当者は内容をご確認の上、処理願います。\n\n----内容--(NO". $orderNo. ")----\n". $orderStr. "BRT自動配信システム";
 
     // メール送信
     foreach ($userTable->selectFromType(USER_TYPE_ADMIN) as $u){

@@ -41,28 +41,41 @@ class OrderUtil{
         
         //クエリビルダをインスタンス化
         $queryBuilder = new QueryBuilder($container->get("db"));
-
         //クエリ構築
         $queryBuilder
-            ->select('*')
+            ->select('users.first_name, users.last_name, users.student_no, orders.id as orders_id, bento.id as bento_id, SUM(orders.quantity) as quantity')
+            ->groupBy("bento.id, users.id")
             ->from("bento INNER JOIN orders ON orders.bento_id = bento.id INNER JOIN users ON orders.users_id = users.id")
             ->andWhere("bento.order_deadline_at BETWEEN ". (int)$start. " AND ". (int)$end)
             ->andWhere(BENTO_ORDER_CLOSED. " != (bento.flag & ".BENTO_ORDER_CLOSED . ")");
-
         $queryBuilder->orderBy("bento.end_sale_at", $order);
-        $queryBuilder->setMaxResults(100);
-
+        $queryBuilder->setMaxResults(2100000000);
         //クエリ実行
         $query = $queryBuilder->execute();
+        $orderData = $query->FetchALL(PDO::FETCH_NAMED);
 
-        $ret = $query->FetchALL(PDO::FETCH_NAMED);
-        if (empty($ret)){
+        // 弁当カウント
+        //クエリビルダをインスタンス化
+        $queryBuilder = new QueryBuilder($container->get("db"));
+        //クエリ構築
+        $queryBuilder
+            ->select("bento.id as bento_id, bento.name, SUM(orders.quantity) as quantity, bento.order_deadline_at")
+            ->groupBy("bento.id")
+            ->from("bento INNER JOIN orders ON orders.bento_id = bento.id INNER JOIN users ON orders.users_id = users.id")
+            ->andWhere("bento.order_deadline_at BETWEEN ". (int)$start. " AND ". (int)$end)
+            ->andWhere(BENTO_ORDER_CLOSED. " != (bento.flag & ".BENTO_ORDER_CLOSED . ")");
+        $queryBuilder->orderBy("bento.end_sale_at", $order);
+        $queryBuilder->setMaxResults(2100000000);
+        //クエリ実行
+        $query = $queryBuilder->execute();
+        $bentoData = $query->FetchALL(PDO::FETCH_NAMED);
+        if (empty($orderData)){
             return FALSE;
         } else{
             $orderTable = new Orders($container->get("db"));
-            foreach ($ret as $r){
+            foreach ($orderData as $r){
                 $orderTable->update([
-                    "id"=> $r["id"][1],
+                    "id"=> $r["orders_id"],
                     "flag"=> $r["flag"] | BENTO_ORDER_CLOSED
                 ]);
             }
@@ -75,21 +88,28 @@ class OrderUtil{
             ->where("order_deadline_at <= ". (int)$end);
         $query = $queryBuilder->execute();
         
+        // 結果の生成
+        foreach ($bentoData as $b){
+            $ret[$b["bento_id"]] = ["name"=> $b["name"], "quantity"=> $b["quantity"], "orderDeadlineAtStr"=> date("Y-m-d", $b["order_deadline_at"])];
+        }
+        foreach ($orderData as $o){
+            if (empty($ret[$o["bento_id"]]["order"])){
+                $ret[$o["bento_id"]]["order"] = [["name"=> $o["last_name"]. " ". $o["first_name"], "studentNo"=> $o["student_no"], "quantity"=> $o["quantity"]],];
+            } else{
+                array_push($ret[$o["bento_id"]]["order"], ["name"=> $o["last_name"]. " ". $o["first_name"], "studentNo"=> $o["student_no"], "quantity"=> $o["quantity"]]);
+            }
+        }
+        
         return $ret;
     }
     
     // 予約取次ログ追加
-    static function addHistory($studentNo, $firstName, $lastName, $bentoName, $quantity, $orderDeadlineAt, $startSaleAt){
+    static function addHistory($logStr){
         global $container;    
         $orderHistoryTable = new Order_history($container->get("db"));
         return $orderHistoryTable->insert([
-            "student_no"=> $studentNo,
-            "last_name"=> $lastName,
-            "first_name"=> $firstName,
-            "bento_name"=> $bentoName,
-            "quantity"=> $quantity,
-            "order_deadline_at"=> $orderDeadlineAt,
-            "start_sale_at"=> $startSaleAt
+            "log"=> $logStr,
+            "time"=> time()
         ]);
     }
 }

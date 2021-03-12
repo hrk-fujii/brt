@@ -59,12 +59,7 @@ CREATE TABLE IF NOT EXISTS informations (
 
 CREATE TABLE IF NOT EXISTS order_history (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    student_no INT UNSIGNED,
-    last_name CHAR(32) NOT NULL,
-    first_name CHAR(32) NOT NULL,
-    bento_name CHAR(64) NOT NULL,
-    quantity INT UNSIGNED NOT NULL,
-    order_deadline_at BIGINT UNSIGNED NOT NULL,
-    start_sale_at BIGINT UNSIGNED NOT NULL,
+    log TEXT,
+    time BIGINT UNSIGNED NOT NULL,
     flag INT UNSIGNED NOT NULL DEFAULT 0)
     ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
