@@ -149,6 +149,7 @@ function deleteMenuCtrl($response, $view, $db, $deleteTarget){
     
     // 削除前にいったんデータ保持
     $orderArray = $orderTable->selectFromBentoId($deleteTarget);
+    
     // メニュー削除
     $bentoTable->deleteFromId($deleteTarget);
 
@@ -164,7 +165,7 @@ function deleteMenuCtrl($response, $view, $db, $deleteTarget){
     $body = "BRTのご利用、ありがとうございます。メニューの修正に伴い、以下の弁当のご予約がキャンセルされましたので、お知らせいたします。\n\n内容\n・".
         date("n/j", $bentoData["start_sale_at"]). "(". DAY_JP[date("w", $bentoData["start_sale_at"])]. ") ". date("H:i", $bentoData["start_sale_at"]). " より販売の". $bentoData["name"].
         "\n\n\nご不便をおかけいたします。\n\nBRT運営チーム";
-    MailUtil::sends("弁当の受け取り予定が取り消されました", $body, "no-reply", array_unique($mailArray));
+    MailUtil::sends("弁当の受け取り予定が取り消されました", $body, "noreply", array_unique($mailArray));
 
     return menuManageCtrl($response, $view, $db, $date);
 }
