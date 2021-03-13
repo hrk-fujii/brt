@@ -1,0 +1,72 @@
+{% set page_title = "ユーザー情報編集" %}
+{% set page_description = "BRT - 管理者向けユーザー情報編集フォーム。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>ユーザー情報編集</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>ユーザー情報編集</h2>
+    </div>
+
+
+    <div class="text-center">
+        <p>必要事項を入力し、確定ボタンを押してください。</p>
+    </div>
+    
+
+    <div id="messageText"aria-live="assertive" role="alert">
+        {% if message!=null and message!="" %}
+            <div class="alert-danger p-3">{{ message | nl2br}}</div>
+	    {% endif %}
+    </div>
+
+    <form method="post" autocomplete="off">
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_lastName"> 性（カタカナ）</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_lastName" type="text" name="lastName" value="{{ lastName }}" required>
+            </div>
+        </div>
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_firstName"> 名（カタカナ）</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_firstName" type="text" name="firstName" value="{{ firstName }}" required>
+            </div>
+        </div>
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_studentNo">学籍番号</label>
+                <input class ="col-12 col-sm-8 col-md-9" id="form_studentNo" type="text" name="studentNo" value="{{ studentNo }}">
+            </div>
+        </div>
+        <div class="container py-5">
+            <div class="row mb-3">
+                <label class="col-12 col-sm-4 col-md-3" for="form_userType">ユーザー種別</label>
+                <select class ="col-12 col-sm-8 col-md-9" id="form_userType" name="userType" required>
+                    <option value="">必ず選択</option>
+                    <option value="general">一般ユーザー</option>
+                    <option value="admin">管理ユーザー</option>
+                    <option value="disable">無効ユーザー</option>
+                </select>
+            </div>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-success" name="editTarget" value="{{ editTarget }}">確定</button>
+        </div>
+    </form>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

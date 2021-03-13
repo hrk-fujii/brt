@@ -1,0 +1,56 @@
+{% set page_title = "編集ユーザー選択" %}
+{% set page_description = "BRT - 管理者向け編集ユーザー選択フォーム。" %}
+
+{#レイアウト継承#}
+{% extends "layout/layout.twig" %}
+
+{# スタイルシートの追加 #}
+{% block header_scripts_add %}
+{% endblock %}
+
+{# ページ本文 #}
+{% block page_content %}
+
+    <div class="jumbotron bg-warning text-center d-none d-sm-block">
+        <h2>編集ユーザー選択</h2>
+    </div>
+    <div class="bg-warning py-3 text-center d-sm-none">
+        <h2>編集ユーザー選択</h2>
+    </div>
+
+
+    <div class="text-center">
+        <p>編集したいユーザーを選択し、次へボタンを押します。</p>
+    </div>
+    
+
+    <div id="messageText"aria-live="assertive" role="alert">
+        {% if message!=null and message!="" %}
+            <div class="alert-danger p-3">{{ message | nl2br}}</div>
+	    {% endif %}
+    </div>
+
+    <form method="post" autocomplete="off">
+        <div class="container py-5">
+            {% for user in userArray %}
+                {% if user.type==1 %}
+                    <p><label><input type="radio" name="editTargetRadio" value="{{ user.id }}" required>{{ user.last_name }} {{ user.first_name }}  [一般]  {{ user.student_no }} :  {{ user.mail }}</label></p>
+                {% elseif user.type==2 %}
+                    <p><label><input type="radio" name="editTargetRadio" value="{{ user.id }}" required>{{ user.last_name }} {{ user.first_name }}  [管理者]  {{ user.student_no }} :  {{ user.mail }}</label></p>
+                {% elseif user.type==3 %}
+                    <p><label><input type="radio" name="editTargetRadio" value="{{ user.id }}" required>{{ user.last_name }} {{ user.first_name }}  [無効]  {{ user.student_no }} :  {{ user.mail }}</label></p>
+                {% else %}
+                    <p><label><input type="radio" name="editTargetRadio" value="{{ user.id }}" required>{{ user.last_name }} {{ user.first_name }}  {{ user.student_no }}  {{ user.mail }}</label></p>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="text-center">
+            <input type="submit" class="btn btn-success" name="goToEdit" value="次へ">
+        </div>
+    </form>
+
+{% endblock %}
+
+{# フッダ以降に追加する内容 #}
+{% block footer_scripts_add %}
+{% endblock %}

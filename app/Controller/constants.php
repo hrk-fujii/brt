@@ -3,6 +3,7 @@
 // ユーザータイプ
 const USER_TYPE_ADMIN = 2;
 const USER_TYPE_GENERAL = 1;
+const USER_TYPE_DISABLE = 3;
 
 // DBフラグ
 const BENTO_ORDER_CLOSED = 1;

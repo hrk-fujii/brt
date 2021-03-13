@@ -28,8 +28,20 @@ class Users extends Dao{
             "id"=> $id,
             "password_hash"=> $password_hash,
             "url_param"=> $param,
-            "last_updated_at"=> time(),
-            "last_logdin_at"=> time()
+            "last_updated_at"=> time()
+        ]);
+    }
+
+    // ユーザー情報更新
+    function updateInfoFromId($id, $firstName, $lastName, $studentNo, $type){
+        if (empty($id)){return FALSE;}
+        return $this->update([
+            "id"=> $id,
+            "first_name"=> $firstName,
+            "last_name"=> $lastName,
+            "student_no"=> $studentNo,
+            "type"=> $type,
+            "last_updated_at"=> time()
         ]);
     }
 
@@ -51,6 +63,11 @@ class Users extends Dao{
         ]);
     }
 
+    // 全ユーザー一覧
+    function selectAll($col="id", $order="ASC"){
+        return $this->select([], $col, $order, 2100000000, TRUE);
+    }
+    
     // IDから取得
     function selectFromId($id){
         return $this->select([
@@ -79,10 +96,6 @@ class Users extends Dao{
         ], $sort = "id", $order = "ASC", $limit = 2100000000, $fetch_all = TRUE);
     }
 
-    // ユーザー全件取得
-    function selectAll(){
-        return $this->select([], $sort = "id", $order = "ASC", $limit = 2100000000, $fetch_all = TRUE);
-    }
 
     function deleteFromId($id){
         if (empty($id)){
