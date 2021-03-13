@@ -47,7 +47,7 @@ class AccessHandler{
 		if (!empty($_SESSION["brt-userId"])){
 			$userData = $userTable->selectFromId($_SESSION["brt-userId"]);
 		}
-		if (empty($_SESSION["brt-lastLogdinAt"]) || $userData["last_updated_at"] > $_SESSION["brt-lastLogdinAt"]){
+		if (!empty($_SESSION["brt-lastLogdinAt"]) && $userData["last_updated_at"] > $_SESSION["brt-lastLogdinAt"]){
 			$sessionData = [];
 			if (!empty($_SESSION["brt-confirmMail"])){ // 確認メールアドレスは例外
 				$sessionData["brt-confirmMail"] = $_SESSION["brt-confirmMail"];

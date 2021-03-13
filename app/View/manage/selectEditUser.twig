@@ -34,7 +34,7 @@
         <div class="container py-5">
             {% for user in userArray %}
                 {% if user.type==1 %}
-                    <p><label><input type="radio" name="editTargetRadio" value="{{ user.id }}" required>{{ user.last_name }} {{ user.first_name }}  [一般]  {{ user.student_no }} :  {{ user.mail }}</label></p>
+                    <p class="my-1"><label><input type="radio" name="editTargetRadio" value="{{ user.id }}" required>{{ user.last_name }} {{ user.first_name }}  [一般]  {{ user.student_no }} :  {{ user.mail }}</label></p>
                 {% elseif user.type==2 %}
                     <p><label><input type="radio" name="editTargetRadio" value="{{ user.id }}" required>{{ user.last_name }} {{ user.first_name }}  [管理者]  {{ user.student_no }} :  {{ user.mail }}</label></p>
                 {% elseif user.type==3 %}
