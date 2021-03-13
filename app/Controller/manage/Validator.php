@@ -20,6 +20,9 @@ function setSessionFromEditMenu($input, $targetId=NULL){
     if ($input["saleLengthHour"] < 0 or $input["saleLengthMinute"] < 0){
         $message = $message. "・販売期間の設定が不正です。\n";
     }
+    if ($input["saleLengthHour"]==0 && $input["saleLengthMinute"]<15){
+        $message = $message. "・販売期間は、裁定でも". ORDER_TAKE_LIMIT_BEFORE_MINUTE. "分間必要です。\n";
+    }
     $input["endSaleAt"] = $startSaleAt + $input["saleLengthHour"] * 60 * 60 + $input["saleLengthMinute"] * 60;
     if (date("d", $input["endSaleAt"])!==date("d", $startSaleAt)){
         $message = $message. "・日付をまたいだ販売期間の登録はできません。\n";
