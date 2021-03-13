@@ -36,6 +36,7 @@ class MailUtil{
 			$mail->Subject = $title;
 			$mail->Body  = $body;
 
+			$mail->MessageID = "<". time().substr(str_shuffle("0123456789abcdef"), 0, 4). $_ENV["MAIL_ADDRESSBASE"]. ">";
 			$mail->send();
 			return TRUE;
 		} catch (Exception $e){
@@ -65,6 +66,7 @@ class MailUtil{
 			$mail->Subject = $title;
 			$mail->Body  = $body;
 
+			$mail->MessageID = "<". time().substr(str_shuffle("0123456789abcdef"), 0, 4). $_ENV["MAIL_ADDRESSBASE"]. ">";
 			$mail->send();
 			return TRUE;
 		} catch (Exception $e){
