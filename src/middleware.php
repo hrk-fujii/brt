@@ -57,6 +57,12 @@ class AccessHandler{
 			$_SESSION = $sessionData;
 		}
 
+		// アカウントが無効ならログアウト
+		if (!empty($userData["type"]) && $userData["type"]==USER_TYPE_DISABLE){
+			$_SESSION = [];
+			return ViewUtil::error($response, $this->container->get("view"), "このユーザーは無効に設定されています。サイト管理者までお問い合わせください。");
+		}
+
 		// 会員向けにはログイン必須
 		if (!empty($path[1]) && ($path[1]==="mypage" || $path[1]==="order") && empty($_SESSION["brt-userId"])){
 			return ViewUtil::error($response, $this->container->get("view"), "このページにアクセスするには、ログインしてください。");

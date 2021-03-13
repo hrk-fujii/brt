@@ -167,6 +167,8 @@ function userEntryCtrl($response, $view, $db, $message="", $previousData=["mail"
     $userData = $userTable->selectFromMail($_SESSION["brt-confirmMail"]);
     if (empty($userData)){ // ユーザー登録
         return $view->render($response, 'entry/new.twig', $data);
+    } elseif($userData["type"]==USER_TYPE_DISABLE){
+        return ViewUtil::error($response, $view, "このユーザーは無効に設定されています。サイト管理者までお問い合わせください。");
     } else{ // パスワード更新
         return $view->render($response, 'entry/update.twig', $data);
     }
