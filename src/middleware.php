@@ -43,11 +43,11 @@ class AccessHandler{
 		$userTable = new Users($this->container->get("db"));
 		$path = explode("/",$request->getUri()->getPath());
 		
-		// パスワード変更とかがあったらログアウト
+		// アカウントの大事な変更とかがあったらログアウト
 		if (!empty($_SESSION["brt-userId"])){
 			$userData = $userTable->selectFromId($_SESSION["brt-userId"]);
 		}
-		if (!empty($_SESSION["brt-lastLogdinAt"]) && $userData["last_updated_at"] > $_SESSION["brt-lastLogdinAt"]){
+		if (empty($userData) || (!empty($_SESSION["brt-lastLogdinAt"]) && $userData["last_updated_at"] > $_SESSION["brt-lastLogdinAt"])){
 			$sessionData = [];
 			if (!empty($_SESSION["brt-confirmMail"])){ // 確認メールアドレスは例外
 				$sessionData["brt-confirmMail"] = $_SESSION["brt-confirmMail"];
