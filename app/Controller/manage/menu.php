@@ -89,11 +89,7 @@ function editNewMenuCtrl($response, $view, $data=[], $message=""){
         $val = strtotime(date("Y-m-d", time() + (60*60*24*$count)));
         $data["startSaleDateArray"][$val] = date("n月j日", $val). DAY_JP[date("w", $val)]. "曜日";
     }
-    if ($menuId===NULL){
-        return $view->render($response, 'manage/newMenu.twig', $data);
-    } else{
-        return $view->render($response, 'manage/editMenu.twig', $data);
-    }
+    return $view->render($response, 'manage/newMenu.twig', $data);
 }
 
 // メニュー確認フォーム

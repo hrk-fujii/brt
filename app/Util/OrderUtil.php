@@ -43,35 +43,36 @@ class OrderUtil{
         $queryBuilder = new QueryBuilder($container->get("db"));
         //クエリ構築
         $queryBuilder
-            ->select('users.first_name, users.last_name, users.student_no, orders.id as orders_id, bento.id as bento_id, SUM(orders.quantity) as quantity')
+            ->select('users.first_name, users.last_name, users.student_no, users.mail, orders.id as orders_id, bento.id as bento_id, SUM(orders.quantity) as quantity')
             ->groupBy("bento.id, users.id")
             ->from("bento INNER JOIN orders ON orders.bento_id = bento.id INNER JOIN users ON orders.users_id = users.id")
             ->andWhere("bento.order_deadline_at BETWEEN ". (int)$start. " AND ". (int)$end)
             ->andWhere(BENTO_ORDER_CLOSED. " != (bento.flag & ".BENTO_ORDER_CLOSED . ")");
-        $queryBuilder->orderBy("bento.end_sale_at", $order);
+        $queryBuilder->orderBy("bento.end_sale_at", "ASC");
         $queryBuilder->setMaxResults(2100000000);
         //クエリ実行
         $query = $queryBuilder->execute();
-        $orderData = $query->FetchALL(PDO::FETCH_NAMED);
+        $orderData = $query->FetchALL();
 
         // 弁当カウント
         //クエリビルダをインスタンス化
         $queryBuilder = new QueryBuilder($container->get("db"));
         //クエリ構築
         $queryBuilder
-            ->select("bento.id as bento_id, bento.name, SUM(orders.quantity) as quantity, bento.order_deadline_at")
+            ->select("bento.id as bento_id, bento.name, SUM(orders.quantity) as quantity, bento.order_deadline_at, bento.start_sale_at")
             ->groupBy("bento.id")
-            ->from("bento INNER JOIN orders ON orders.bento_id = bento.id INNER JOIN users ON orders.users_id = users.id")
+            ->from("bento LEFT OUTER JOIN orders ON orders.bento_id = bento.id")
             ->andWhere("bento.order_deadline_at BETWEEN ". (int)$start. " AND ". (int)$end)
             ->andWhere(BENTO_ORDER_CLOSED. " != (bento.flag & ".BENTO_ORDER_CLOSED . ")");
-        $queryBuilder->orderBy("bento.end_sale_at", $order);
+        $queryBuilder->orderBy("bento.end_sale_at", "ASC");
         $queryBuilder->setMaxResults(2100000000);
         //クエリ実行
         $query = $queryBuilder->execute();
-        $bentoData = $query->FetchALL(PDO::FETCH_NAMED);
-        if (empty($orderData)){
+        $bentoData = $query->FetchALL();
+        if (empty($bentoData)){
             return FALSE;
-        } else{
+        }
+        if (empty($orderData)){
             $orderTable = new Orders($container->get("db"));
             foreach ($orderData as $r){
                 $orderTable->update([
@@ -86,18 +87,14 @@ class OrderUtil{
             ->update('bento')
             ->set("flag", "flag | ". BENTO_ORDER_CLOSED)
             ->where("order_deadline_at <= ". (int)$end);
-        $query = $queryBuilder->execute();
+            $query = $queryBuilder->execute();
         
         // 結果の生成
         foreach ($bentoData as $b){
-            $ret[$b["bento_id"]] = ["name"=> $b["name"], "quantity"=> $b["quantity"], "orderDeadlineAtStr"=> date("Y-m-d", $b["order_deadline_at"])];
+            $ret[$b["bento_id"]] = ["name"=> $b["name"], "quantity"=> (int)$b["quantity"], "orderDeadlineAtStr"=> date("Y-m-d,H:i", $b["order_deadline_at"]), "startSaleAtStr"=> date("Y-m-d,H:i", $b["start_sale_at"]), "order"=> []];
         }
         foreach ($orderData as $o){
-            if (empty($ret[$o["bento_id"]]["order"])){
-                $ret[$o["bento_id"]]["order"] = [["name"=> $o["last_name"]. " ". $o["first_name"], "studentNo"=> $o["student_no"], "quantity"=> $o["quantity"]],];
-            } else{
-                array_push($ret[$o["bento_id"]]["order"], ["name"=> $o["last_name"]. " ". $o["first_name"], "studentNo"=> $o["student_no"], "quantity"=> $o["quantity"]]);
-            }
+            array_push($ret[$o["bento_id"]]["order"], ["name"=> $o["last_name"]. " ". $o["first_name"], "mail"=> $o["mail"], "studentNo"=> $o["student_no"], "quantity"=> $o["quantity"]]);
         }
         
         return $ret;

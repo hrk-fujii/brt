@@ -16,17 +16,21 @@ $app->get('/internalapi/sendorder', function (Request $request, Response $respon
 
     // 本文のリスト部分作成
     $orderStr = "";
+    $logStr = "";
     $orderHistoryTable = new Order_history($this->db);
     foreach ($ret as $b){
-        $orderStr = $orderStr. "<". $b["name"]. "  計". $b["quantity"]. "個>\n(". $b["orderDeadlineAtStr"]. "締切分) \n";
+        $orderStr = $orderStr. "<". $b["name"]. "  計". $b["quantity"]. "個>\n締切: ". $b["orderDeadlineAtStr"]. "\n販売: ". $b["startSaleAtStr"]."から\n";
+        $logStr = $logStr. "<". $b["name"]. "  計". $b["quantity"]. "個>\n締切: ". $b["orderDeadlineAtStr"]. "\n販売: ". $b["startSaleAtStr"]."から\n";
         foreach ($b["order"] as $o){
             $orderStr = $orderStr. "・". $o["name"]. " ". $o["studentNo"]. ": ". $o["quantity"]. "個\n";
+            $logStr = $logStr. "・". $o["name"]. " ". $o["studentNo"]. "(". $o["mail"]. "): ". $o["quantity"]. "個\n";
         }
         $orderStr = $orderStr. "\n";
+        $logStr = $logStr. "\n";
     }
 
     // ログを記録
-    $orderNo = orderUtil::addHistory($orderStr);
+    $orderNo = orderUtil::addHistory($logStr);
 
     // メール本文
     $text = "このメールは、BRT管理者宛に配信しています。\n\n以下の予約を回収いたしましたので、内容をご確認の上、処理願います。\n\n----内容--(NO". $orderNo. ")----\n". $orderStr. "BRT自動配信システム";
