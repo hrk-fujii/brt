@@ -151,9 +151,9 @@ function sendConfirmMailCtrl($request, $response, $view, $mail){
     
     // メール送信
     $title = "BRT メールアドレスの確認";
-    $text = "BRTのご利用、ありがとうございます。\nユーザー登録、パスワードをリセットする場合は、以下のURLにアクセスしてください。\n\n".
+    $text = "BRTのご利用、ありがとうございます。\n以下のURLにアクセスし、手続きを行ってください。\nURLの有効期間は、発行後3分間です。\n\n".
         UrlUtil::getBaseHttpsUrl(). "/entry?session=". $param.
-        "\n\nBRT運営チーム";
+        "\n\n※このメールにお心当たりのない方は、お手数をおかけいたしますが、このメールを破棄してくださるようお願いいたします。\n\nBRT運営チーム";
     
     MailUtil::send($title, $text, "noreply", $mail);
         return $view->render($response, 'entry/send.twig', $data);
