@@ -48,7 +48,7 @@ $app->post('/manage/edituser', function (Request $request, Response $response) {
             } else{
                 $userTable->updateInfoFromId($input["editTarget"], $input["firstName"], $input["lastName"], $input["studentNo"], $userType);
             }
-            return $this->view->render($response, 'manage/editUserOk.twig', []);
+            return selectEditUserCtrl($response, $this->view, $this->db, "情報を更新しました。（編集ユーザー : ". $userData["mail"]);
         } else{
             return ViewUtil::error($response, $this->view);
         }
@@ -62,6 +62,25 @@ $app->post('/manage/edituser', function (Request $request, Response $response) {
             return ViewUtil::error($response, $this->view);
         }
         return userEditCtrl($response, $this->view, $this->db, "", ["firstName"=> $userData["first_name"], "lastName"=> $userData["last_name"], "studentNo"=> $userData["student_no"]], $input["editTargetRadio"]);
+    
+    // ユーザー削除
+    } elseif (!empty($input["goToDelete"])){
+        if (empty($input["editTargetRadio"])){
+            return selectEditUserCtrl($response, $this->view, $this->db, "ユーザーを選択してください。");
+        }
+        if (empty($input["deleteConfirm"])){
+            return selectEditUserCtrl($response, $this->view, $this->db, "ユーザーを削除するには、「削除確認」にチェックを入れてください。");
+        }
+        $userData = $userTable->selectFromId($input["editTargetRadio"]);
+        if (empty($userData)){
+            return ViewUtil::error($response, $this->view);
+        }
+        if ($userData["type"]==USER_TYPE_DISABLE){
+            $userTable->deleteFromId($userData["id"]);
+            return selectEditUserCtrl($response, $this->view, $this->db, "削除しました。（削除ユーザー : ". $userData["mail"]);
+        } else{
+            return selectEditUserCtrl($response, $this->view, $this->db, "削除するには、対象ユーザーを無効に設定してください。");
+        }
     }
 });
 
