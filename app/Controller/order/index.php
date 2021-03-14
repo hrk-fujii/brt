@@ -44,7 +44,7 @@ function orderProcessCtrl($response, $view, $db, $input){
 
     // 個数の確認
     if (empty($input["quantity"]) || ($input["quantity"]-(int)$input["quantity"]!==0) || ($input["quantity"] > 99) || ($input["quantity"] < 1)){
-        return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], "「予約」ボタンの左の入力欄で、予約個数を設定してください。なお、誤入力防止のため、1度に99個以上の予約はできません。");
+        return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], "「予約」ボタンの左の入力欄で、予約個数を設定してください。なお、誤入力防止のため、1度に100個以上の予約はできません。");
     }
     
     // ロック状況確認
