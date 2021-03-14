@@ -70,4 +70,11 @@ class UrlUtil{
 		$abs_url = $urlHome . '/' . implode('/', $pathBaseAry);
 		return $abs_url;
 	}
+
+	//httpsURL取得
+	static function getBaseHttpsUrl(){
+		global $container;
+		$url = $container["request"]->getUri()->getBaseUrl();
+		return preg_replace("/^http/", "https", $url);
+	}
 }

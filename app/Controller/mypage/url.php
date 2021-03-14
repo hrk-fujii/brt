@@ -4,6 +4,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Model\Dao\Users;
 use Util\MemberUtil;
+use Util\UrlUtil;
 
 
 
@@ -31,9 +32,10 @@ function showMyUrlManageCtrl($request, $response, $view, $db, $input=NULL){
         $param = MemberUtil::makeRandomId();
         $userTable->updateUrlParamFromId($_SESSION["brt-userId"], $param);
         $message = "ログイン用URLを変更しました。";
+        MemberUtil::login($userData["id"], $userData["mail"]);
     }
 
-    $data = ["message"=> $message, "url"=> $request->getUri()->getBaseUrl()."/?id=".$param];
+    $data = ["message"=> $message, "url"=> UrlUtil::getBaseHttpsUrl()."/?id=".$param];
 
     return $view->render($response, 'mypage/url.twig', $data);
     

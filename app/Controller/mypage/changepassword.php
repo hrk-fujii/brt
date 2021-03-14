@@ -6,6 +6,7 @@ use Util\ValidationUtil;
 use Util\OrderUtil;
 use Util\MemberUtil;
 use Util\ViewUtil;
+use Util\UrlUtil;
 use Model\Dao\Users;
 
 
@@ -45,7 +46,7 @@ $app->post('/mypage/changepassword', function (Request $request, Response $respo
         $param = MemberUtil::makeRandomId();
         $userTable = new Users($this->db);
         $userTable->updatePassword_hashFromId($_SESSION["brt-userId"], password_hash($input["password"], PASSWORD_DEFAULT), $param);
-        $data = ["url"=> $request->getUri()->getBaseUrl()."/?id=".$param];
+        $data = ["url"=> UrlUtil::getBaseHttpsUrl()."/?id=".$param];
         return $this->view->render($response, 'mypage/changepwConfirm.twig', $data);
     }
 });

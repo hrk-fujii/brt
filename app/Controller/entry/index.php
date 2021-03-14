@@ -7,6 +7,7 @@ use Util\MemberUtil;
 use Util\MailUtil;
 use Util\ConfirmMailUtil;
 use Util\ViewUtil;
+use Util\UrlUtil;
 use Model\Dao\Users;
 use Model\Dao\Confirm_mails;
 
@@ -89,7 +90,7 @@ $app->post('/entry', function (Request $request, Response $response) {
                 }
                 if ($userId!==FALSE){
                     MemberUtil::login($userId, $input["new-confirmMail"]);
-                    $data = ["mail"=> $input["new-confirmMail"], "lastName"=> $input["lastName"], "firstName"=> $input["firstName"], "studentNo"=> $input["studentNo"], "url"=> $request->getUri()->getBaseUrl()."/?id=".$param];
+                    $data = ["mail"=> $input["new-confirmMail"], "lastName"=> $input["lastName"], "firstName"=> $input["firstName"], "studentNo"=> $input["studentNo"], "url"=> UrlUtil::getBaseHttpsUrl()."/?id=".$param];
                     return $this->view->render($response, 'entry/newOk.twig', $data);
                 } else{
                     return ViewUtil::error($response, $this->view);
@@ -124,7 +125,7 @@ $app->post('/entry', function (Request $request, Response $response) {
                 $param = MemberUtil::makeRandomId();
                 if ($userTable->updatePassword_hashFromId($userData["id"], password_hash($input["password"], PASSWORD_DEFAULT), $param)==TRUE){
                     MemberUtil::login($userData["id"], $userData["mail"]);
-                    $data = ["mail"=> $input["update-confirmMail"], "lastName"=> $userData["last_name"], "firstName"=> $userData["first_name"], "url"=> $request->getUri()->getBaseUrl()."/?id=".$param];
+                    $data = ["mail"=> $input["update-confirmMail"], "lastName"=> $userData["last_name"], "firstName"=> $userData["first_name"], "url"=> UrlUtil::getBaseHttpsUrl()."/?id=".$param];
                     return $this->view->render($response, 'entry/updateOk.twig', $data);
                 } else{
                     return ViewUtil::error($response, $this->view);
@@ -151,7 +152,7 @@ function sendConfirmMailCtrl($request, $response, $view, $mail){
     // メール送信
     $title = "BRT メールアドレスの確認";
     $text = "BRTのご利用、ありがとうございます。\nユーザー登録、パスワードをリセットする場合は、以下のURLにアクセスしてください。\n\n".
-        $request->getUri()->getBaseUrl(). "/entry?session=". $param.
+        UrlUtil::getBaseHttpsUrl(). "/entry?session=". $param.
         "\n\nBRT運営チーム";
     
     MailUtil::send($title, $text, "noreply", $mail);
