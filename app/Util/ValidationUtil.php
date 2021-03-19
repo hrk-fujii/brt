@@ -8,7 +8,7 @@ class ValidationUtil{
 
 	// 各種文字列の正規表現パターン
 	const MAIL_PATTERN = "/^.+@.+\\.[a-zA-Z]+$/";
-	const NTUT_MAIL_PATTERN = "/^.+@.*\\.tsukuba-tech\\.ac\\.jp$/";
+	const NTUT_MAIL_PATTERN = "/^.+@.*tsukuba-tech\\.ac\\.jp$/";
 	const USER_NAME_PATTERN = "@^[a-z0-9._\\-]{6,30}$@";
 	const USER_PASSWORD_PATTERN = "@^[a-zA-Z0-9\\.,_\\-\\(\\)\\[\\]]{8,30}$@";
 	const KATAKANA_NAME_PATTERN = "/^[ァ-ヾ]{1,30}$/u";
