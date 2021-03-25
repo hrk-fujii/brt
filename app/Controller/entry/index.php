@@ -151,7 +151,7 @@ function sendConfirmMailCtrl($request, $response, $view, $mail){
     
     // メール送信
     $title = "BRT メールアドレスの確認";
-    $text = "BRTのご利用、ありがとうございます。\n以下のURLにアクセスし、手続きを行ってください。\nURLの有効期間は、発行後3分間です。\n\n".
+    $text = "BRTのご利用、ありがとうございます。\n以下のURLにアクセスし、操作を続行します。\nなお、本URLの発行後、1時間以内にお手続きを完了してください。\n\n".
         UrlUtil::getBaseHttpsUrl(). "/entry?session=". $param.
         "\n\n※このメールにお心当たりのない方は、お手数をおかけいたしますが、このメールを破棄してくださるようお願いいたします。\n\nBRT運営チーム";
     

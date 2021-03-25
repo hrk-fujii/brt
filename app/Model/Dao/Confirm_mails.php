@@ -8,7 +8,7 @@ use PDO;
 
 class Confirm_mails extends Dao{
     // 古いデータを削除
-    function deleteOldItems($sec=180){
+    function deleteOldItems($sec=3600){
         $this->delete([
             "set_at"=> ["<", time() - $sec]
         ]);

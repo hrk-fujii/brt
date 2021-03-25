@@ -27,11 +27,11 @@ class ConfirmMailUtil{
         // 古いデータを削除してDB取得
         $cMailTable->deleteOldItems();
         $data = $cMailTable->selectFromParam($param, $target);
-        $cMailTable->deleteFromParam($param);
         
         if (empty($data)){
             return FALSE;
         } else{
+            $cMailTable->deleteFromParam($param);
             return $data["mail"];
         }
     }
