@@ -33,7 +33,7 @@ $app->get('/internalapi/sendorder', function (Request $request, Response $respon
     $orderNo = orderUtil::addHistory($logStr);
 
     // メール本文
-    $text = "このメールは、BRT管理者宛に配信しています。\n\n以下の予約を回収いたしましたので、内容をご確認の上、処理願います。\n\n----内容--(NO". $orderNo. ")----\n". $orderStr. "BRT自動配信システム";
+    $text = "##########\nこのシステムは、現在テスト中です。実際に予約されたものではありませんので、このメールは破棄してください。なお、4月1日の運用開始を予定しています。\n##########\n\nこのメールは、BRT管理者宛に配信しています。\n\n以下の予約を回収いたしましたので、内容をご確認の上、処理願います。\n\n----内容--(NO". $orderNo. ")----\n". $orderStr. "BRT自動配信システム";
 
     // メール送信
     foreach ($userTable->selectFromType(USER_TYPE_ADMIN) as $u){

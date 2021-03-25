@@ -1,3 +1,4 @@
+{% set notification_str = "このページはテスト中です。予約が実際に反映されることはありません。" %}
 {% set page_title = "トップ" %}
 {% set page_description = "筑波技術大学春日キャンパス学食弁当予約取次システム（Bento Reservation Terminal）トップページ。" %}
 
@@ -11,6 +12,10 @@
 {# ページ本文 #}
 {% block page_content %}
 
+    {% if notification_str!="" %}
+        <div class="m-1">お知らせ : {{ notification_str }}</div>
+    {% endif %}
+
     <div class="jumbotron bg-warning text-center d-none d-sm-block">
         {% if day!=NULL %}
             <h2>{{ day }}のメニュー</h2>
@@ -18,6 +23,7 @@
             <h2>表示できるメニューがありません</h2>
         {% endif %}
     </div>
+    
     <div class="bg-warning py-3 text-center d-sm-none">
         {% if day!=NULL %}
             <h2>{{ day }}のメニュー</h2>
