@@ -60,7 +60,7 @@ $app->post('/entry', function (Request $request, Response $response) {
         } else{
             $message = ""; // バリデーション
             if ($input["new-confirmMail"]!==$_SESSION["brt-confirmMail"]){ // メールアドレス無効
-                $message = $message. "・メールアドレスが謝っています。\n";
+                $message = $message. "・メールアドレスには、このフォームのURLを受信したアドレスを入力してください。\n";
             }
             $message = $message. ValidationUtil::checkString("katakanaLastName", $input["lastName"], "・", "\n");
             $message = $message. ValidationUtil::checkString("katakanaFirstName", $input["firstName"], "・", "\n");
