@@ -37,6 +37,7 @@ $app->post('/entry', function (Request $request, Response $response) {
 
     // メールアドレス確認
     if (!empty($input["newMail"])){
+        $input["newMail"] = strtolower(mb_convert_kana($input["newMail"], "a"));
         $message = ValidationUtil::checkString("ntut-mail", $input["newMail"]);
         if ($message===""){ // メールアドレスが正常
             return sendConfirmMailCtrl($request, $response, $this->view, $input["newMail"]);
@@ -58,6 +59,7 @@ $app->post('/entry', function (Request $request, Response $response) {
         if (empty($_SESSION["brt-confirmMail"])){
             return ViewUtil::error($response, $this->view);
         } else{
+            $input["new-confirmMail"] = strtolower(mb_convert_kana($input["new-confirmMail"], "a"));
             $message = ""; // バリデーション
             if ($input["new-confirmMail"]!==$_SESSION["brt-confirmMail"]){ // メールアドレス無効
                 $message = $message. "・メールアドレスには、このフォームのURLを受信したアドレスを入力してください。\n";
@@ -107,6 +109,7 @@ $app->post('/entry', function (Request $request, Response $response) {
         if (empty($_SESSION["brt-confirmMail"])){
             return ViewUtil::error($response, $this->view);
         } else{
+            $input["update-confirmMail"] = strtolower(mb_convert_kana($input["update-confirmMail"], "a"));
             $message = ""; // バリデーション
             if ($input["update-confirmMail"]!==$_SESSION["brt-confirmMail"]){ // メールアドレス有効
                 $message = $message. "・メールアドレスが謝っています。\n";

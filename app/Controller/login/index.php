@@ -27,6 +27,9 @@ $app->get("/logout", function (request $request, response $response){
 $app->post("/login", function (request $request, response $response){
     $inputData = $request->getParsedBody();
     
+    // メールアドレスは半角小文字に強制する
+    $inputData["mail"] = strtolower(mb_convert_kana($inputData["mail"], "a"));
+    
     // ログインを試行
     // エラーがあれば再入力、なけばログイン
     if (!loginFromInput($inputData["mail"], $inputData["password"], $this->db)){

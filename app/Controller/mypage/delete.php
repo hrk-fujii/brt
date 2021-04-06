@@ -21,6 +21,9 @@ $app->post('/mypage/delete', function (Request $request, Response $response) {
     // 削除申請内容確認
     $input = $request->getParsedBody();
 
+    // メールアドレスを半角小文字に強制
+    $input["mail"] = strtolower(mb_convert_kana($input["mail"], "a"));
+    
     $message = "";
     $userTable = new Users($this->db);
     $userData = $userTable->selectFromId($_SESSION["brt-userId"]);
