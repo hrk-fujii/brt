@@ -32,6 +32,11 @@
         {% endif %}
     </div>
 
+    {% if attribute(session, "brt-userId")==NULL %}
+        <div>
+            <p>メニューを予約するには、<a href="{{ get_base_path() }}/login">ログイン</a>が必要です。はじめての方は、<a href="{{ get_base_path() }}/entry">ユーザー登録</a>を行ってください。</p>
+        </div>
+    {% endif %}
 
     {% for b in bentoArray %}
         <div class="container my-3">
@@ -46,17 +51,13 @@
                     <div class="col-12 col-sm-4 px-1 py-1">
                         <p>{{ b.price }}円</p>
                         <p>{{ b.startSaleStr }}から{{ b.saleLengthMinuteOnly }}分間販売</p>
-                        {% if b.orderDeadlineStr==NULL %}
-                            <p>予約できません</p>
-                        {% else %}
-                            <p>{{ b.orderDeadlineStr }}予約締切</p>
-                        {% endif %}
+                        <p>{{ b.orderDeadlineStr }}予約締切</p>
                     </div>
                 </div>
-                {% if b.orderDeadlineStr!=NULL %}
+                {% if attribute(session, "brt-userId")!=NULL %}
                     <div class="row">
-                        {% if attribute(session, "brt-userId")==NULL %}
-                            <div class="col-12 text-right"><p>予約には、ログインが必要です。</p></div>
+                        {% if b.orderDeadlineStatus!=NULL %}
+                            <div class="col-12 text-right"><p>{{ b.orderDeadlineStatus }}</p></div>
                         {% else %}
                             <div class="col-12 text-right"><p>
                                 <label><input type="checkbox" name="unlock" value="yes">予約確認</label>

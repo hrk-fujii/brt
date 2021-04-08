@@ -58,10 +58,9 @@ $app->get('/', function (Request $request, Response $response) {
     foreach ($data["bentoArray"] as &$b){
         $b["startSaleStr"] = date("H:i", $b["start_sale_at"]);
         $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);
+        $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);
         if (($b["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED) || ($b["order_deadline_at"] <= time())){
-            $b["orderDeadlineStr"] = NULL; // 予約できない
-        } else{
-            $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);
+            $b["orderDeadlineStatus"] = "予約の締め切り時刻を過ぎました。";
         }
     }
     $data["saleDateArray"] = [];
