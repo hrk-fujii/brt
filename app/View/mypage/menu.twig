@@ -57,9 +57,9 @@
                     <p>数量　{{ b.quantity }}個</p>
                     <p>計　{{ b.totalPrice }}円</p>
                     {% if b.orderDeadlineOver==TRUE %}
-                        <p>予約内容伝達済み</p>
+                        <p>予約伝達済</p>
                     {% else %}
-                        <p>締め切り待機中</p>
+                        <p>締切待機中</p>
                     {% endif %}
                 </div>
                 {% if b.orderDeadlineOver==FALSE %}
