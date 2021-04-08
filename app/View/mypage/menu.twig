@@ -51,12 +51,18 @@
                 <div class="col-8 px-1 py-1">
                     <p>{{ b.startSaleStr }}から{{ b.saleLengthMinuteOnly }}分間</p>
                     <p>予約の受け取りは{{ b.takeDeadlineStr }}まで</p>
+                    <p>{{ b.orderDeadlineStr }}予約締切</p>
                 </div>
                 <div class="col-4 px-1 py-1">
                     <p>数量　{{ b.quantity }}個</p>
                     <p>計　{{ b.totalPrice }}円</p>
+                    {% if b.orderDeadlineOver==TRUE %}
+                        <p>予約内容伝達済み</p>
+                    {% else %}
+                        <p>締め切り待機中</p>
+                    {% endif %}
                 </div>
-                {% if b.orderDeadlineStr!=NULL %}
+                {% if b.orderDeadlineOver==FALSE %}
                     <div class="col-12 text-right">
                         <label class="mx-1"><input type="checkbox" name="unlock" value="yes">取り消し確認</label>
                         <button type="submit" class="button btn-success text-white" name="deleteTarget" value="{{ b.id }}">取消</button>

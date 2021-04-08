@@ -105,10 +105,11 @@ function showMyMenuManage($response, $view, $db, $input=NULL){
         $b["startSaleStr"] = date("n月j日", $b["start_sale_at"]). "(". DAY_JP[date("w", $b["start_sale_at"])]. ")". date("H:i", $b["start_sale_at"]);
         $b["takeDeadlineStr"] = date("H:i", $b["end_sale_at"] - ORDER_TAKE_LIMIT_BEFORE_MINUTE * 60);
         $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);
+        $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);
         if (($b["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED) || ($b["order_deadline_at"] <= time())){
-            $b["orderDeadlineStr"] = NULL; // 予約できない
+            $b["orderDeadlineOver"] = TRUE;
         } else{
-            $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);
+            $b["orderDeadlineOver"] = FALSE;
         }
         $b["totalPrice"] = $b["price"] * $b["quantity"];
     }
