@@ -89,6 +89,7 @@ function editNewMenuCtrl($response, $view, $data=[], $message=""){
         $val = strtotime(date("Y-m-d", time() + (60*60*24*$count)));
         $data["startSaleDateArray"][$val] = date("n月j日", $val). DAY_JP[date("w", $val)]. "曜日";
     }
+    $data["servingArray"] = [0=>"大盛りなし" , BENTO_LARGE1=> BENTO_LARGE1_PRICE. "円大盛り", BENTO_LARGE2=> BENTO_LARGE2_PRICE. "円大盛り"];
     return $view->render($response, 'manage/newMenu.twig', $data);
 }
 
@@ -105,7 +106,7 @@ function writeMenuCtrl($response, $view, $db){
     $data = $_SESSION["brt-confirmEditMenu"];
     foreach ($data["name"] as $k=> $v){
         if (!empty($data["name"][$k])){
-            $ret = $bentoTable->insertItem($data["name"][$k], $data["discription"][$k], $data["price"][$k], $data["orderDeadlineAt"], $data["startSaleAt"], $data["endSaleAt"], NULL);
+            $ret = $bentoTable->insertItem($data["name"][$k], $data["discription"][$k], $data["price"][$k], $data["orderDeadlineAt"], $data["startSaleAt"], $data["endSaleAt"], NULL, $data["serving"][$k]);
         }
     }
     

@@ -28,7 +28,7 @@ class Bento extends Dao{
     }
 
     // アイテム追加
-    function insertItem($name, $discription, $price, $orderDeadlineAt, $startSaleAt, $endSaleAt, $stock){
+    function insertItem($name, $discription, $price, $orderDeadlineAt, $startSaleAt, $endSaleAt, $stock, $flag){
         return $this->insert([
             "name"=> $name,
             "discription"=> $discription,
@@ -36,7 +36,8 @@ class Bento extends Dao{
             "order_deadline_at"=> $orderDeadlineAt,
             "start_sale_at"=> $startSaleAt,
             "end_sale_at"=> $endSaleAt,
-            "stock"=> $stock
+            "stock"=> $stock,
+            "flag"=> $flag
         ]);
     }
 

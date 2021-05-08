@@ -47,22 +47,32 @@ function orderProcessCtrl($response, $view, $db, $input){
         return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], "「予約」ボタンの左の入力欄で、予約個数を設定してください。なお、誤入力防止のため、1度に100個以上の予約はできません。");
     }
     
-    // ロック状況確認
-    if (empty($input["unlock"])){
-        return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], "「予約」ボタン左の「予約確認」にチェックを入れてから操作してください。誤操作防止のために必要です。なお、チェックを入れて予約操作を行った場合、確認画面は表示されず、予約が確定します。");
+    // 分量選択
+    if (!isset($input["serving"]) || !($input["serving"]==="0" || $input["serving"]==BENTO_LARGE1)){
+        return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], "「予約」ボタン左のコンボボックスで、サイズを選択してください。なお、サイズを選択して予約操作を行った場合、確認画面は表示されず、予約が確定します。");
     }
 
     // 予約登録
-    if (!empty($orderTable->insertItem($bentoData["id"], $input["quantity"], $_SESSION["brt-userId"]))){
+    if (!empty($orderTable->insertItem($bentoData["id"], $input["quantity"], $_SESSION["brt-userId"], (int)$input["serving"]))){
+        $servingPrice = 0;
+        if (($bentoData["flag"] & BENTO_LARGE1)===BENTO_LARGE1){
+            $servingPrice = BENTO_LARGE1_PRICE;
+        } elseif (($bentoData["flag"] & BENTO_LARGE2)===BENTO_LARGE2){
+            $servingPrice = BENTO_LARGE2_PRICE;
+        }
+        $serving = "";
+        if ($input["serving"]==BENTO_LARGE1){
+            $serving = "（大盛り）";
+        }
         $body = $userData['last_name']. " ". $userData['first_name']. "様\nBRTをご利用いただき、ありがとうございます。\n以下の内容で予約を受け付けました。\n現在の予約状況につきましては、マイページにてご確認いただけます。\n\n内容\n".
-            "・". $bentoData['name']. "    ". $input['quantity']. "個\n".
-            "合計金額: ". $bentoData["price"] * $input["quantity"]. "円\n".
+            "・". $bentoData['name']. $serving. "    ". $input['quantity']. "個\n".
+            "合計金額: ". ($bentoData["price"] + $servingPrice) * $input["quantity"]. "円\n".
             "受取期間: ". date("n月j日", $bentoData["start_sale_at"]). "(". DAY_JP[date("w", $bentoData["start_sale_at"])]. ")". date("H:i", $bentoData["start_sale_at"]). " から ". date("H:i", $bentoData["end_sale_at"] - ORDER_TAKE_LIMIT_BEFORE_MINUTE * 60). " まで".
             "\n\n".
             "販売所にて、現金と引き替えにお渡しいたします。\n上記受取期間内に、必ずお受け取りください。\n".
             "なお、予約の締め切り時刻までは、マイページから予約を取り消すことができます。\n\nBRT運営チーム";
         MailUtil::send("弁当を予約しました", $body, "noreply", $userData["mail"]);
-        return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], $bentoData['name']. "、". $input['quantity']. "個の予約を受け付けました。予約内容を記載したメールを送信しましたので、ご確認ください。予約状況の確認、締め切り前の予約の取り消し等は、マイページから行うことができます。");
+        return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], $bentoData['name']. $serving. "、". $input['quantity']. "個の予約を受け付けました。予約内容を記載したメールを送信しましたので、ご確認ください。予約状況の確認、締め切り前の予約の取り消し等は、マイページから行うことができます。");
     }
 
     return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], "予約処理に失敗しました。しばらくたってから再試行してください。");

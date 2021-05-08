@@ -32,7 +32,7 @@ class OrderUtil{
         //クエリ実行
         $query = $queryBuilder->execute();
 
-        return $query->FetchALL();
+        return $query->FetchALL(PDO::FETCH_NAMED);
     }
 
     // 予約を回収
@@ -43,8 +43,8 @@ class OrderUtil{
         $queryBuilder = new QueryBuilder($container->get("db"));
         //クエリ構築
         $queryBuilder
-            ->select('users.first_name, users.last_name, users.student_no, users.mail, orders.id as orders_id, bento.id as bento_id, SUM(orders.quantity) as quantity')
-            ->groupBy("bento.id, users.id")
+            ->select('users.first_name, users.last_name, users.student_no, users.mail, orders.id as orders_id, bento.id as bento_id, SUM(orders.quantity) as quantity, orders.flag as flag')
+            ->groupBy("bento.id, users.id, orders.flag")
             ->from("bento INNER JOIN orders ON orders.bento_id = bento.id INNER JOIN users ON orders.users_id = users.id")
             ->andWhere("bento.order_deadline_at BETWEEN ". (int)$start. " AND ". (int)$end)
             ->andWhere(BENTO_ORDER_CLOSED. " != (bento.flag & ".BENTO_ORDER_CLOSED . ")");
@@ -94,7 +94,7 @@ class OrderUtil{
             $ret[$b["bento_id"]] = ["name"=> $b["name"], "quantity"=> (int)$b["quantity"], "orderDeadlineAtStr"=> date("Y-m-d,H:i", $b["order_deadline_at"]), "startSaleAtStr"=> date("Y-m-d,H:i", $b["start_sale_at"]), "order"=> []];
         }
         foreach ($orderData as $o){
-            array_push($ret[$o["bento_id"]]["order"], ["name"=> $o["last_name"]. " ". $o["first_name"], "mail"=> $o["mail"], "studentNo"=> $o["student_no"], "quantity"=> $o["quantity"]]);
+            array_push($ret[$o["bento_id"]]["order"], ["name"=> $o["last_name"]. " ". $o["first_name"], "mail"=> $o["mail"], "studentNo"=> $o["student_no"], "quantity"=> $o["quantity"], "flag"=> $o["flag"]]);
         }
         
         return $ret;

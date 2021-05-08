@@ -64,9 +64,15 @@ function deleteOrderProcessCtrl($response, $view, $db, $input){
     }
 
     // 取り消し
+    if (((int)$orderData["flag"]&BENTO_LARGE1)===BENTO_LARGE1){
+        $bentoName = $bentoData["name"]. "（大盛り）";
+    } else{
+        $bentoName = $bentoData["name"];
+    }
+    
     $orderTable->deleteFromId($input["deleteTarget"]);
     $body = $userData['last_name']. " ". $userData['first_name']. "様\nBRTをご利用いただき、ありがとうございます。\n以下の予約を取り消しました。\n\n内容\n".
-        "・". $bentoData['name']. "    ". $orderData['quantity']. "個\n\n".
+        "・". $bentoName. "    ". $orderData['quantity']. "個\n\n".
         "なお、予約の締め切り時刻までは、再度予約することもできます。\n\nBRT運営チーム";
     MailUtil::send("弁当の予約を取り消しました", $body, "noreply", $userData["mail"]);
     return deleteOrderMessageCtrl($response, $view, $bentoData["end_sale_at"], $bentoData['name']. "、". $orderData['quantity']. "個の予約を取り消しました。予約の締め切り時刻までは、再度予約することも可能です。");
@@ -111,7 +117,18 @@ function showMyMenuManage($response, $view, $db, $input=NULL){
         } else{
             $b["orderDeadlineOver"] = FALSE;
         }
-        $b["totalPrice"] = $b["price"] * $b["quantity"];
+        // 弁当大盛り対応
+        $b["flag"][0] = (int)$b["flag"][0];
+        $b["flag"][1] = (int)$b["flag"][1];
+        if (($b["flag"][1]===BENTO_LARGE1) && (($b["flag"][0]&BENTO_LARGE1)===BENTO_LARGE1)){
+            $b["totalPrice"] = ($b["price"]+BENTO_LARGE1_PRICE) * $b["quantity"];
+            $b["name"] = $b["name"]. "（大盛り）";
+        } elseif (($b["flag"][1]===BENTO_LARGE1) && (($b["flag"][0]&BENTO_LARGE2)===BENTO_LARGE2)){
+            $b["totalPrice"] = ($b["price"]+BENTO_LARGE2_PRICE) * $b["quantity"];
+            $b["name"] = $b["name"]. "（大盛り）";
+        } else{
+            $b["totalPrice"] = $b["price"] * $b["quantity"];
+        }
     }
     $data["bentoArray"] = $orderArray;
 

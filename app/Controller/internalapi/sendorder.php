@@ -22,8 +22,12 @@ $app->get('/internalapi/sendorder', function (Request $request, Response $respon
         $orderStr = $orderStr. "<". $b["name"]. "  計". $b["quantity"]. "個>\n締切: ". $b["orderDeadlineAtStr"]. "\n販売: ". $b["startSaleAtStr"]."から\n";
         $logStr = $logStr. "<". $b["name"]. "  計". $b["quantity"]. "個>\n締切: ". $b["orderDeadlineAtStr"]. "\n販売: ". $b["startSaleAtStr"]."から\n";
         foreach ($b["order"] as $o){
-            $orderStr = $orderStr. "・". $o["name"]. " ". $o["studentNo"]. ": ". $o["quantity"]. "個\n";
-            $logStr = $logStr. "・". $o["name"]. " ". $o["studentNo"]. "(". $o["mail"]. "): ". $o["quantity"]. "個\n";
+            $largeStr = "";
+            if (($o["flag"]&BENTO_LARGE1)===BENTO_LARGE1){
+                $largeStr = "[大盛り] ";
+            }
+            $orderStr = $orderStr. "・". $o["name"]. " ". $o["studentNo"]. ": ". $largeStr. $o["quantity"]. "個\n";
+            $logStr = $logStr. "・". $o["name"]. " ". $o["studentNo"]. "(". $o["mail"]. "): ". $largeStr. $o["quantity"]. "個\n";
         }
         $orderStr = $orderStr. "\n";
         $logStr = $logStr. "\n";

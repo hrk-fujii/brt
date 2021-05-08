@@ -1,6 +1,7 @@
 <?php
 
 function setSessionFromEditMenu($input, $targetId=NULL){
+    $servingArray = [0=>"大盛りなし" , BENTO_LARGE1=> BENTO_LARGE1_PRICE. "円大盛り", BENTO_LARGE2=> BENTO_LARGE2_PRICE. "円大盛り"];
     $message = "";
     $startSaleAt = $input["startSaleDate"] + $input["startSaleHour"] * 60 * 60 + $input["startSaleMinute"] * 60;
     if ($startSaleAt <= time()){
@@ -40,8 +41,13 @@ function setSessionFromEditMenu($input, $targetId=NULL){
             return substr($message, 0, -1);
         } elseif (isset($input["name"][$k]) && $input["name"][$k]!==""){
             $isArray = TRUE;
+        } elseif (!empty($input["serving"][$k]) && !($input["serving"][$k]==BENTO_LARGE1 || $input["serving"][$k]==BENTO_LARGE2)){
+            $message = $message. "・メニューの分量種別を、正しく設定してください。\n";
+            return substr($message, 0, -1);
         }
         $input["price"][$k] = (int)$input["price"][$k];
+        $input["serving"][$k] = (int)$input["serving"][$k];
+        $input["servingStr"][$k] = $servingArray[$input["serving"][$k]];
     }
     if (!$isArray){
         $message = $message. "・メニューを設定してください。\n";

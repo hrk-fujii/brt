@@ -62,6 +62,13 @@ $app->get('/', function (Request $request, Response $response) {
         if (($b["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED) || ($b["order_deadline_at"] <= time())){
             $b["orderDeadlineStatus"] = "予約の締め切り時刻を過ぎました。";
         }
+        if (($b["flag"]&BENTO_LARGE1)===BENTO_LARGE1){
+            $b["servingArray"] = [""=> "サイズを選択", 0=> "普通 +0円", BENTO_LARGE1=> "大盛り +". BENTO_LARGE1_PRICE. "円"];
+        } elseif (($b["flag"]&BENTO_LARGE2)===BENTO_LARGE2){
+            $b["servingArray"] = [""=> "サイズを選択", 0=> "普通 +0円", BENTO_LARGE1=> "大盛り +". BENTO_LARGE2_PRICE. "円"];
+        } else{
+            $b["servingArray"] = [""=> "サイズを選択", 0=> "普通 +0円"];
+        }
     }
     $data["saleDateArray"] = [];
     for ($count = 0; $count <= 10; $count++){

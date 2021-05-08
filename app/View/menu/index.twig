@@ -69,7 +69,11 @@
                             <div class="col-12 text-right"><p>{{ b.orderDeadlineStatus }}</p></div>
                         {% else %}
                             <div class="col-12 text-right"><p>
-                                <label><input type="checkbox" name="unlock" value="yes">予約確認</label>
+                                <label><select name="serving">
+                                    {% for key, val in b.servingArray %}
+                                        <option value="{{ key }}">{{val}}</option>
+                                    {% endfor %}
+                                </select></label>
                                 <span class="mx-1"><input type="number" min="1" max="99" step="1" name="quantity" value="1">個</span>
                                 <button type="submit" name="orderTarget" value="{{ b.id }}" class="button btn-success text-white px-3 py-1">予約</button>
                             </p></div>

@@ -22,12 +22,13 @@ class Orders extends Dao{
     }
 
     // 追加
-    function insertItem($bentoId, $quantity, $userId){
+    function insertItem($bentoId, $quantity, $userId, $flag=0){
         return $this->insert([
             "bento_id"=> $bentoId,
             "quantity"=> $quantity,
             "users_id"=> $userId,
-            "ordered_at"=> time()
+            "ordered_at"=> time(),
+            "flag"=> $flag
         ]);
     }
 
