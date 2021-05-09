@@ -63,6 +63,8 @@ function orderProcessCtrl($response, $view, $db, $input){
         $serving = "";
         if ($input["serving"]==BENTO_LARGE1){
             $serving = "（大盛り）";
+        } else{
+            $servingPrice = 0; //大盛り価格を適用しない
         }
         $body = $userData['last_name']. " ". $userData['first_name']. "様\nBRTをご利用いただき、ありがとうございます。\n以下の内容で予約を受け付けました。\n現在の予約状況につきましては、マイページにてご確認いただけます。\n\n内容\n".
             "・". $bentoData['name']. $serving. "    ". $input['quantity']. "個\n".
