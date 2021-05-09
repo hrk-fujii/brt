@@ -72,7 +72,7 @@ function orderProcessCtrl($response, $view, $db, $input){
             "販売所にて、現金と引き替えにお渡しいたします。\n上記受取期間内に、必ずお受け取りください。\n".
             "なお、予約の締め切り時刻までは、マイページから予約を取り消すことができます。\n\nBRT運営チーム";
         MailUtil::send("弁当を予約しました", $body, "noreply", $userData["mail"]);
-        return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], $bentoData['name']. $serving. "、". $input['quantity']. "個の予約を受け付けました。予約内容を記載したメールを送信しましたので、ご確認ください。予約状況の確認、締め切り前の予約の取り消し等は、マイページから行うことができます。");
+        return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], $bentoData['name']. $serving. "、". $input['quantity']. "個の予約を受け付けました。\n受け取り期間内に、必ずお受け取りください。販売所にて、担当者に氏名をお伝えください。現金と引き換えでのお渡しとなります。\n予約内容を記載したメールを送信しましたので、ご確認ください。予約状況の確認、締め切り前の予約の取り消し等は、マイページから行うことができます。");
     }
 
     return orderMessageCtrl($response, $view, $bentoData["start_sale_at"], "予約処理に失敗しました。しばらくたってから再試行してください。");

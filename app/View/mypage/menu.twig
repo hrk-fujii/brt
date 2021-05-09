@@ -56,8 +56,10 @@
                 <div class="col-4 px-1 py-1">
                     <p>数量　{{ b.quantity }}個</p>
                     <p>計　{{ b.totalPrice }}円</p>
-                    {% if b.orderDeadlineOver==TRUE %}
+                    {% if b.orderDeadlineOver=="sent" %}
                         <p>予約伝達済</p>
+                    {% elseif b.orderDeadlineOver=="over" %}
+                        <p>状態不明</p>
                     {% else %}
                         <p>締切待機中</p>
                     {% endif %}

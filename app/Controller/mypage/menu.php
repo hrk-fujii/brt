@@ -112,10 +112,12 @@ function showMyMenuManage($response, $view, $db, $input=NULL){
         $b["takeDeadlineStr"] = date("H:i", $b["end_sale_at"] - ORDER_TAKE_LIMIT_BEFORE_MINUTE * 60);
         $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);
         $b["orderDeadlineStr"] = date("j日", $b["order_deadline_at"]). "(". DAY_JP[date("w", $b["order_deadline_at"])]. ")". date("H:i", $b["order_deadline_at"]);
-        if (($b["flag"]&BENTO_ORDER_CLOSED===BENTO_ORDER_CLOSED) || ($b["order_deadline_at"] <= time())){
-            $b["orderDeadlineOver"] = TRUE;
+        if (((int)$b["flag"][0]&BENTO_ORDER_CLOSED)===BENTO_ORDER_CLOSED){
+            $b["orderDeadlineOver"] = "sent";
+        } elseif($b["order_deadline_at"] > time()){
+            $b["orderDeadlineOver"] = "no";
         } else{
-            $b["orderDeadlineOver"] = FALSE;
+            $b["orderDeadlineOver"] = "over";
         }
         // 弁当大盛り対応
         $b["flag"][0] = (int)$b["flag"][0];
