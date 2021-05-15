@@ -64,7 +64,7 @@
                         <p>締切待機中</p>
                     {% endif %}
                 </div>
-                {% if b.orderDeadlineOver==FALSE %}
+                {% if b.orderDeadlineOver=="no" %}
                     <div class="col-12 text-right">
                         <label class="mx-1"><input type="checkbox" name="unlock" value="yes">取り消し確認</label>
                         <button type="submit" class="button btn-success text-white" name="deleteTarget" value="{{ b.id }}">取消</button>
