@@ -107,7 +107,8 @@ function showMyMenuManage($response, $view, $db, $input=NULL){
         $monthTmp = strtotime(date("Y-m-1", $monthTmp - 1));
     }
 
-    foreach ($orderArray as &$b){
+    foreach ($orderArray as $b){
+        $b'["id"] = $b["id"][1];
         $b["startSaleStr"] = date("n月j日", $b["start_sale_at"]). "(". DAY_JP[date("w", $b["start_sale_at"])]. ")". date("H:i", $b["start_sale_at"]);
         $b["takeDeadlineStr"] = date("H:i", $b["end_sale_at"] - ORDER_TAKE_LIMIT_BEFORE_MINUTE * 60);
         $b["saleLengthMinuteOnly"] = (int)(($b["end_sale_at"]-$b["start_sale_at"])/60);
