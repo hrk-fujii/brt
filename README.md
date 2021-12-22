@@ -14,10 +14,13 @@
 1. ここをクローン
 1. 例に従い、ディレクトリを構成。
 1. sample_docker-compose.ymlの設定例に従い、docker-compose.ymlを構成し、ファイルを配置
-1. mariadbにsetup.sql読み込み
 1. sample_default.confを参考にnginxを設定し、default.confを配置
 1. 設定例をほとんど変更していないなら、以下のようにファイルを配置し、serviceディレクトリで以下を実行
     $docker-compose up -d
+1. mariadbにsetup.sql読み込み
+1. いったんコンテナをdownして、docker-compose.ymlのcommand: "composer install"をコメントアウト
+1. 再び、コンテナ起動
+1. localhost:10201にアクセスして動作を確認
 
 ## ディレクトリ構成
 service
